@@ -1,36 +1,70 @@
-import { NotionPageData, Theme } from '@/types';
-import { convertMarkdownToHtml } from '@/utils/markdown'
+import type { NotionPageData, Theme } from '@/types'
+import { defaultTheme, getAllThemes } from '@/utils/themes'
 import { processNotionImages } from '@/utils/imageProcessor'
-import { defaultTheme } from '@/utils/themes'
+import { convertMarkdownToHtml } from '@/utils/markdown'
+
+function createFullHtml(content: string, theme: Theme = defaultTheme): string {
+  return `<div id="nice" class="wechat-article">${content}</div><style>${theme.styles}</style>`
+}
 
 class Notion2WeChat {
   private sidebar: HTMLElement | null = null
+  private button: HTMLElement | null = null
+  private availableThemes: Theme[] = [defaultTheme]
 
   constructor() {
     this.init()
   }
 
-  private init() {
-    if (this.isNotionPage()) {
-      this.createFloatingButton()
+  private async init() {
+    await this.loadThemes()
+    this.createFloatingButton()
+    this.attachButtonEvent()
+  }
+
+  private async loadThemes() {
+    try {
+      this.availableThemes = await getAllThemes()
+    } catch (error) {
+      console.warn('Failed to load themes:', error)
+      this.availableThemes = [defaultTheme]
     }
   }
 
-  private isNotionPage(): boolean {
-    return window.location.hostname === 'www.notion.so'
+  private attachButtonEvent() {
+    this.button?.addEventListener('click', () => this.openSidebar())
+  }
+
+  private openSidebar() {
+    if (this.sidebar) {
+      this.closeSidebar()
+      return
+    }
+    
+    this.createSidebar()
+    document.body.appendChild(this.sidebar!)
+    
+    // 显示侧边栏
+    setTimeout(() => {
+      if (this.sidebar) {
+        this.sidebar.style.transform = 'translateX(0)'
+      }
+    }, 10)
+    
+    this.attachSidebarEvents()
   }
 
   private createFloatingButton() {
-    const button = document.createElement('div')
-    button.id = 'notion2wechat-button'
-    button.innerHTML = `
+    this.button = document.createElement('div')
+    this.button.id = 'notion2wechat-button'
+    this.button.innerHTML = `
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     `
-    button.style.cssText = `
+    this.button.style.cssText = `
       position: fixed;
       top: 50%;
       right: 20px;
@@ -49,36 +83,28 @@ class Notion2WeChat {
       transition: all 0.3s ease;
     `
 
-    button.addEventListener('mouseenter', () => {
-      button.style.transform = 'translateY(-50%) scale(1.1)'
+    this.button.addEventListener('mouseenter', () => {
+      this.button!.style.transform = 'translateY(-50%) scale(1.1)'
     })
 
-    button.addEventListener('mouseleave', () => {
-      button.style.transform = 'translateY(-50%) scale(1)'
+    this.button.addEventListener('mouseleave', () => {
+      this.button!.style.transform = 'translateY(-50%) scale(1)'
     })
 
-    button.addEventListener('click', () => this.toggleSidebar())
-
-    document.body.appendChild(button)
+    document.body.appendChild(this.button)
   }
 
-  private toggleSidebar() {
-    if (this.sidebar) {
-      this.closeSidebar()
-    } else {
-      this.openSidebar()
-    }
-  }
-
-  private openSidebar() {
+  private createSidebar() {
     this.sidebar = document.createElement('div')
-    this.sidebar.id = 'notion2wechat-sidebar'
+    this.sidebar.className = 'notion2wechat-sidebar'
     this.sidebar.innerHTML = `
       <div class="sidebar-header">
         <button class="close-btn">&times;</button>
         <div class="controls">
           <select id="theme-select">
-            <option value="default">默认主题</option>
+            ${this.availableThemes.map(theme => 
+              `<option value="${theme.name}">${this.getThemeDisplayName(theme.name)}</option>`
+            ).join('')}
           </select>
           <button id="generate-btn" class="primary-btn">生成</button>
           <button id="publish-btn" class="secondary-btn" disabled>复制</button>
@@ -98,19 +124,17 @@ class Notion2WeChat {
       background: white;
       box-shadow: -4px 0 12px rgba(0,0,0,0.15);
       z-index: 10001;
-      transform: translateX(0);
+      transform: translateX(100%);
       transition: transform 0.3s ease;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     `
 
-    this.addSidebarStyles()
-    this.attachSidebarEvents()
-    document.body.appendChild(this.sidebar)
-  }
-
-  private addSidebarStyles() {
+    // 添加样式
     const style = document.createElement('style')
     style.textContent = `
+      .notion2wechat-sidebar * {
+        box-sizing: border-box;
+      }
       .sidebar-header {
         padding: 12px 16px;
         border-bottom: 1px solid #e5e7eb;
@@ -170,27 +194,27 @@ class Notion2WeChat {
         cursor: not-allowed;
       }
       .secondary-btn {
-        background: #10b981;
-        color: white;
+        background: #f3f4f6;
+        color: #374151;
       }
       .secondary-btn:hover {
-        background: #059669;
+        background: #e5e7eb;
       }
       .secondary-btn:disabled {
-        background: #9ca3af;
+        background: #f9fafb;
+        color: #9ca3af;
         cursor: not-allowed;
       }
       .preview-area {
-        height: calc(100vh - 57px);
-        display: flex;
-        flex-direction: column;
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        padding: 16px;
       }
       .preview-content {
-        flex: 1;
-        border: none;
-        padding: 16px;
-        overflow-y: auto;
+        min-height: 100%;
         background: #f9fafb;
+        border-radius: 8px;
+        padding: 16px;
       }
     `
     document.head.appendChild(style)
@@ -200,10 +224,15 @@ class Notion2WeChat {
     const closeBtn = this.sidebar?.querySelector('.close-btn')
     const generateBtn = this.sidebar?.querySelector('#generate-btn')
     const publishBtn = this.sidebar?.querySelector('#publish-btn')
+    const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
 
     closeBtn?.addEventListener('click', () => this.closeSidebar())
     generateBtn?.addEventListener('click', () => this.generateContent())
     publishBtn?.addEventListener('click', () => this.copyContent())
+    
+    if (themeSelect) {
+      themeSelect.addEventListener('change', () => this.updatePreviewTheme())
+    }
   }
 
   private closeSidebar() {
@@ -235,10 +264,7 @@ class Notion2WeChat {
     try {
       // 转换Markdown为HTML
       const result = convertMarkdownToHtml(notionData.content, [])
-      const styledHtml = this.applyTheme(result.html, defaultTheme)
-      this.showPreview(styledHtml)
-
-      
+      this.showPreview(result.html)
 
       const publishBtn = this.sidebar?.querySelector('#publish-btn') as HTMLButtonElement
       if (publishBtn) {
@@ -266,6 +292,7 @@ class Notion2WeChat {
         return null
       }
 
+      // 简化的内容提取，实际实现需要更复杂的逻辑
       const content = this.extractMarkdownFromElement(contentElement)
 
       return {
@@ -280,137 +307,97 @@ class Notion2WeChat {
   }
 
   private extractMarkdownFromElement(element: Element): string {
-    let markdown = ''
-    const walker = document.createTreeWalker(
-      element,
-      NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
-      null
-    )
-
-    let node
-    while ((node = walker.nextNode())) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        markdown += node.textContent
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as Element
-
-        if (el.tagName === 'H1') {
-          markdown += `\n# ${el.textContent}\n\n`
-        } else if (el.tagName === 'H2') {
-          markdown += `\n## ${el.textContent}\n\n`
-        } else if (el.tagName === 'H3') {
-          markdown += `\n### ${el.textContent}\n\n`
-        } else if (el.tagName === 'P') {
-          markdown += `${el.textContent}\n\n`
-        } else if (el.tagName === 'IMG') {
-          const src = el.getAttribute('src')
-          if (src) {
-            markdown += `![${el.getAttribute('alt') || ''}](${src})\n\n`
-          }
-        } else if (el.tagName === 'PRE') {
-          const codeEl = el.querySelector('code')
-          if (codeEl) {
-            markdown += `\n\`${codeEl.textContent}\`\n\n`
-          }
-        } else if (el.tagName === 'BLOCKQUOTE') {
-          markdown += `> ${el.textContent}\n\n`
-        } else if (el.tagName === 'UL' || el.tagName === 'OL') {
-          const items = el.querySelectorAll('li')
-          items.forEach((item) => {
-            markdown += `- ${item.textContent}\n`
-          })
-          markdown += '\n'
-        }
-      }
-    }
-
-    return markdown.trim()
-  }
-
-  private applyTheme(html: string, theme: Theme): string {
-    return `<div class="wechat-article">${html}</div><style>${theme.styles}</style>`
+    // 简化的实现，实际需要根据Notion的DOM结构进行转换
+    const textContent = element.textContent || ''
+    return textContent
   }
 
   private showPreview(html: string) {
     const previewContent = this.sidebar?.querySelector('#preview-content')
     if (previewContent) {
       previewContent.innerHTML = html
+      this.updatePreviewTheme()
     }
   }
 
-  private async copyContent() {
-    console.log('copyContent method called');
+  private getCurrentTheme(): Theme | null {
+    const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
+    if (!themeSelect) return null
     
-    const previewContent = this.sidebar?.querySelector('#preview-content')
-    if (!previewContent) {
-      alert('请先生成内容')
-      return
-    }
+    const selectedThemeName = themeSelect.value
+    return this.availableThemes.find(theme => theme.name === selectedThemeName) || null
+  }
 
-    // 显示处理状态
-    const copyBtn = this.sidebar?.querySelector('#publish-btn') as HTMLButtonElement
+  private getThemeDisplayName(themeName: string): string {
+    const displayNames: Record<string, string> = {
+      'default': '默认主题',
+      'blue': '蓝色主题',
+      'red': '红色主题'
+    }
+    return displayNames[themeName] || themeName
+  }
+
+  private updatePreviewTheme() {
+    const previewContent = this.sidebar?.querySelector('#preview-content')
+    if (!previewContent) return
+    
+    const theme = this.getCurrentTheme() || defaultTheme
+    
+    // 移除现有的主题样式
+    const existingStyle = previewContent.querySelector('#preview-theme-style')
+    if (existingStyle) {
+      existingStyle.remove()
+    }
+    
+    // 添加新的主题样式
+    const style = document.createElement('style')
+    style.id = 'preview-theme-style'
+    style.textContent = theme.styles
+    previewContent.appendChild(style)
+  }
+
+  private async copyContent() {
+    const preview = document.getElementById('preview-content');
+    if (!preview) return;
+
+    const html = preview.innerHTML;
+    
+    // 更新按钮状态
+    const copyBtn = document.getElementById('copy-btn') as HTMLButtonElement;
     if (copyBtn) {
-      copyBtn.textContent = '处理图片中...'
-      copyBtn.disabled = true
+      copyBtn.textContent = '处理图片中...';
+      copyBtn.disabled = true;
     }
 
     try {
-      let html = previewContent.innerHTML
+      // 处理图片
+      const processedHtml = await processNotionImages(html);
       
-      // 处理Notion图片
-      html = await processNotionImages(html)
+      // 创建完整的HTML文档
+      const selectedTheme = this.getCurrentTheme() || defaultTheme;
+      const fullHtml = createFullHtml(processedHtml, selectedTheme);
       
-      // 创建一个临时的div来获取纯文本内容
-      const tempDiv = document.createElement('div')
-      tempDiv.innerHTML = html
-      const plainText = tempDiv.textContent || tempDiv.innerText || ''
-      
-      // 使用Clipboard API写入富文本和纯文本
-      try {
-        const clipboardItem = new ClipboardItem({
-          'text/html': new Blob([html], { type: 'text/html' }),
-          'text/plain': new Blob([plainText], { type: 'text/plain' })
+      // 复制到剪贴板
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          'text/html': new Blob([fullHtml], { type: 'text/html' }),
+          'text/plain': new Blob([preview.textContent || ''], { type: 'text/plain' })
         })
-        await navigator.clipboard.write([clipboardItem])
-      } catch (err) {
-        // 如果ClipboardItem不支持，回退到传统方法
-        const tempDiv = document.createElement('div')
-        tempDiv.innerHTML = html
-        document.body.appendChild(tempDiv)
-        
-        const selection = window.getSelection()
-        const range = document.createRange()
-        range.selectNodeContents(tempDiv)
-        selection?.removeAllRanges()
-        selection?.addRange(range)
-        document.execCommand('copy')
-        selection?.removeAllRanges()
-        
-        document.body.removeChild(tempDiv)
-      }
+      ]);
       
-      // 显示复制成功提示
-      if (copyBtn) {
-        copyBtn.textContent = '已复制!'
-        copyBtn.style.background = '#059669'
-        
-        setTimeout(() => {
-          copyBtn.textContent = '复制'
-          copyBtn.style.background = '#10b981'
-          copyBtn.disabled = false
-        }, 2000)
-      }
+      alert('已复制到剪贴板，可以直接粘贴到公众号编辑器');
     } catch (error) {
-      console.error('Copy failed:', error)
-      alert('复制失败，请重试')
-      
+      console.error('复制失败:', error);
+      alert('复制失败，请重试');
+    } finally {
       // 恢复按钮状态
       if (copyBtn) {
-        copyBtn.textContent = '复制'
-        copyBtn.disabled = false
+        copyBtn.textContent = '复制';
+        copyBtn.disabled = false;
       }
     }
   }
 }
 
+// 初始化扩展
 new Notion2WeChat()
