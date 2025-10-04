@@ -1,21 +1,15 @@
 import type { Theme } from '@/types'
 
-// 默认主题保持内联，因为它不是从文件加载的
+// 默认主题
 export const defaultTheme: Theme = {
   name: 'default',
   styles: ` #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice img { max-width: 100%; height: auto; display: block; margin: 15px auto; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } #nice code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace; } #nice pre { background-color: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; margin: 15px 0; } #nice pre code { background-color: transparent; padding: 0; } #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } `,
 }
 
-// 从文件加载主题内容
-async function loadThemeFromFile(name: string): Promise<Theme> {
-  try {
-    // 在Vite构建的Chrome扩展中，我们需要导入CSS文件作为模块
-    // 这里我们使用动态导入来获取CSS内容
-    let styles: string
-    
-    if (name === 'blue') {
-      // 直接导入蓝色主题CSS内容
-      styles = `/* 全局属性 */
+// 蓝色主题
+export const blueTheme: Theme = {
+  name: 'blue',
+  styles: `/* 全局属性 */
 #nice {
   counter-reset: counterh1 counterh2 counterh3;
 }
@@ -162,9 +156,12 @@ async function loadThemeFromFile(name: string): Promise<Theme> {
 #nice .footnote-ref {
   color:rgb(37,132,181);
 }`
-    } else if (name === 'red') {
-      // 直接导入红色主题CSS内容
-      styles = `/*自定义样式，实时生效*/
+}
+
+// 红色主题
+export const redTheme: Theme = {
+  name: 'red',
+  styles: `/*自定义样式，实时生效*/
 
 /* 全局属性 */
 #nice {
@@ -422,30 +419,9 @@ async function loadThemeFromFile(name: string): Promise<Theme> {
     width: 100%;
     margin-bottom: 0;
 }`
-    } else {
-      throw new Error(`Unknown theme: ${name}`)
-    }
-    
-    return { name, styles }
-  } catch (error) {
-    console.error(`Error loading theme ${name}:`, error)
-    // 返回一个空的主题作为后备
-    return { name, styles: '/* Error loading theme */' }
-  }
 }
 
-// 获取所有主题（异步加载CSS文件）
-export async function getAllThemes(): Promise<Theme[]> {
-  const themes: Theme[] = [defaultTheme]
-  
-  // 定义需要从文件加载的主题
-  const themeNames = ['blue', 'red']
-  
-  // 并行加载所有主题
-  const loadedThemes = await Promise.all(
-    themeNames.map(name => loadThemeFromFile(name))
-  )
-  
-  themes.push(...loadedThemes)
-  return themes
+// 获取所有主题
+export function getAllThemes(): Theme[] {
+  return [defaultTheme, blueTheme, redTheme]
 }

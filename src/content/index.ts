@@ -16,21 +16,20 @@ class Notion2WeChat {
     this.init()
   }
 
-  private async init() {
+  private init() {
     // 测试URL转换逻辑
     testConvertNotionImageUrls();
     
     this.createFloatingButton()
     this.attachButtonEvent()
-    // 异步加载主题，不阻塞UI初始化
-    this.loadThemes().then(() => {
-      console.log('Themes loaded:', this.availableThemes.map(t => t.name))
-    })
+    // 加载主题
+    this.loadThemes()
+    console.log('Themes loaded:', this.availableThemes.map(t => t.name))
   }
 
-  private async loadThemes() {
+  private loadThemes() {
     try {
-      this.availableThemes = await getAllThemes()
+      this.availableThemes = getAllThemes()
     } catch (error) {
       console.warn('Failed to load themes:', error)
       this.availableThemes = [defaultTheme]
@@ -41,15 +40,10 @@ class Notion2WeChat {
     this.button?.addEventListener('click', () => this.openSidebar())
   }
 
-  private async openSidebar() {
+  private openSidebar() {
     if (this.sidebar) {
       this.closeSidebar()
       return
-    }
-    
-    // 确保主题已加载
-    if (this.availableThemes.length <= 1) {
-      await this.loadThemes()
     }
     
     this.createSidebar()
@@ -399,11 +393,6 @@ class Notion2WeChat {
       // 在预览阶段也处理图片
       const processedHtml = await processNotionImages(html)
       
-      // 确保主题已加载再应用样式
-      if (this.availableThemes.length <= 1) {
-        await this.loadThemes()
-      }
-      
       // 获取当前主题并应用内联样式
       const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
       const selectedThemeName = themeSelect?.value || 'default'
@@ -477,6 +466,13 @@ class Notion2WeChat {
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = html
     
+    // 首先清除所有元素的内联样式
+    const allElements = tempDiv.querySelectorAll('*')
+    allElements.forEach(element => {
+      const htmlElement = element as HTMLElement
+      htmlElement.style.cssText = ''
+    })
+    
     // 解析CSS规则并应用内联样式
     const cssRules = this.parseCssRules(theme.styles)
     
@@ -485,15 +481,8 @@ class Notion2WeChat {
       const elements = tempDiv.querySelectorAll(rule.selector)
       elements.forEach(element => {
         const htmlElement = element as HTMLElement
-        // 合并现有样式和新样式
-        const existingStyles = htmlElement.style.cssText
-        const newStyles = rule.styles
-        
-        if (existingStyles) {
-          htmlElement.style.cssText = existingStyles + '; ' + newStyles
-        } else {
-          htmlElement.style.cssText = newStyles
-        }
+        // 直接设置新样式，替换所有现有样式
+        htmlElement.style.cssText = rule.styles
       })
     })
     

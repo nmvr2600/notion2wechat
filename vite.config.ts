@@ -8,8 +8,6 @@ export default defineConfig({
         'content': resolve(__dirname, 'src/content/index.ts'),
         'styles': resolve(__dirname, 'src/content/styles.css'),
         'background': resolve(__dirname, 'src/background/index.ts'),
-        'theme-blue': resolve(__dirname, 'src/theme/blue.css'),
-        'theme-red': resolve(__dirname, 'src/theme/red.css'),
       },
       output: {
         entryFileNames: '[name].js',
