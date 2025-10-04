@@ -4,7 +4,7 @@ import { processNotionImages } from '@/utils/imageProcessor'
 import { convertMarkdownToHtml } from '@/utils/markdown'
 
 function createFullHtml(content: string, theme: Theme = defaultTheme): string {
-  return `<div id="nice" class="wechat-article">${content}</div><style>${theme.styles}</style>`
+  return `<div id="nice">${content}</div><style>${theme.styles}</style>`
 }
 
 class Notion2WeChat {
@@ -322,7 +322,7 @@ class Notion2WeChat {
   private showPreview(html: string) {
     const previewContent = this.sidebar?.querySelector('#preview-content')
     if (previewContent) {
-      previewContent.innerHTML = html
+      previewContent.innerHTML = `<div id="nice">${html}</div>`
       this.updatePreviewTheme()
     }
   }
