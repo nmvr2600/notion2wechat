@@ -17,9 +17,12 @@ class Notion2WeChat {
   }
 
   private async init() {
-    await this.loadThemes()
     this.createFloatingButton()
     this.attachButtonEvent()
+    // 异步加载主题，不阻塞UI初始化
+    this.loadThemes().then(() => {
+      console.log('Themes loaded:', this.availableThemes.map(t => t.name))
+    })
   }
 
   private async loadThemes() {
@@ -97,12 +100,16 @@ class Notion2WeChat {
   private createSidebar() {
     this.sidebar = document.createElement('div')
     this.sidebar.className = 'notion2wechat-sidebar'
+    
+    // 确保主题已加载
+    const themesToRender = this.availableThemes.length > 1 ? this.availableThemes : [defaultTheme]
+    
     this.sidebar.innerHTML = `
       <div class="sidebar-header">
         <button class="close-btn">&times;</button>
         <div class="controls">
           <select id="theme-select">
-            ${this.availableThemes.map(theme => 
+            ${themesToRender.map(theme => 
               `<option value="${theme.name}">${this.getThemeDisplayName(theme.name)}</option>`
             ).join('')}
           </select>
