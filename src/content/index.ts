@@ -1,7 +1,7 @@
 import type { NotionPageData, Theme } from '@/types'
 import { defaultTheme, getAllThemes } from '@/utils/themes'
 import { processNotionImages } from '@/utils/imageProcessor'
-import { convertMarkdownToHtml } from '@/utils/markdown'
+import { convertMarkdownToHtml, convertNotionImageUrls, testConvertNotionImageUrls } from '@/utils/markdown'
 
 function createFullHtml(content: string, theme: Theme = defaultTheme): string {
   return `<div id="nice">${content}</div><style>${theme.styles}</style>`
@@ -17,6 +17,9 @@ class Notion2WeChat {
   }
 
   private async init() {
+    // 测试URL转换逻辑
+    testConvertNotionImageUrls();
+    
     this.createFloatingButton()
     this.attachButtonEvent()
     // 异步加载主题，不阻塞UI初始化
@@ -274,8 +277,11 @@ class Notion2WeChat {
     }
 
     try {
-      // 转换Markdown为HTML
-      const result = convertMarkdownToHtml(notionData.content, [])
+      // 转换Markdown为HTML，首先处理图片URL
+      const processedMarkdown = convertNotionImageUrls(notionData.content);
+      console.log('Processed markdown:', processedMarkdown); // 调试信息
+      const result = convertMarkdownToHtml(processedMarkdown, [])
+      console.log('Generated HTML:', result.html); // 调试信息
       await this.showPreview(result.html)
 
       const publishBtn = this.sidebar?.querySelector('#publish-btn') as HTMLButtonElement
@@ -345,7 +351,7 @@ class Notion2WeChat {
         document.execCommand('copy')
         
         // 等待一小段时间确保第一次操作完成
-        await new Promise(resolve => setTimeout(resolve, 50))
+        await new Promise(resolve => setTimeout(resolve, 100))
         
         // 第二次选择：重新选择整个页面内容（模拟第二次Cmd+A）
         selection.removeAllRanges()
@@ -356,6 +362,9 @@ class Notion2WeChat {
         // 执行第二次复制命令，这次应该能复制整个页面内容
         document.execCommand('copy')
         
+        // 等待更长时间确保复制操作完成
+        await new Promise(resolve => setTimeout(resolve, 200))
+        
         // 尝试从剪贴板读取Markdown内容
         const clipboardText = await navigator.clipboard.readText()
         
@@ -364,6 +373,7 @@ class Notion2WeChat {
         
         // 如果剪贴板中有内容，直接返回
         if (clipboardText.trim()) {
+          console.log('Clipboard content:', clipboardText.substring(0, 200))
           return clipboardText
         }
       }
