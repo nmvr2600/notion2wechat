@@ -5,7 +5,18 @@ export async function processNotionImages(html: string): Promise<string> {
   
   // 处理每个图片
   for (const img of Array.from(images)) {
-    const src = img.src;
+    let src = img.src || img.getAttribute('src') || '';
+    
+    // 处理Notion的相对路径
+    if (src.startsWith('attachment:')) {
+      // 转换为完整的Notion URL
+      const pageUrl = window.location.href;
+      const pageId = pageUrl.match(/([a-f0-9]{32})/)?.[1];
+      if (pageId) {
+        src = `https://www.notion.so/image/attachment:${src.replace('attachment:', '')}?table=block&id=${pageId}`;
+        img.setAttribute('src', src);
+      }
+    }
     
     if (src.includes('notion.so') || src.includes('notionusercontent.com') || src.includes('file.notion.so')) {
       try {

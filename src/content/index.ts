@@ -271,7 +271,7 @@ class Notion2WeChat {
     try {
       // 转换Markdown为HTML
       const result = convertMarkdownToHtml(notionData.content, [])
-      this.showPreview(result.html)
+      await this.showPreview(result.html)
 
       const publishBtn = this.sidebar?.querySelector('#publish-btn') as HTMLButtonElement
       if (publishBtn) {
@@ -352,10 +352,12 @@ class Notion2WeChat {
     }
   }
 
-  private showPreview(html: string) {
+  private async showPreview(html: string) {
     const previewContent = this.sidebar?.querySelector('#preview-content')
     if (previewContent) {
-      previewContent.innerHTML = `<div id="nice">${html}</div>`
+      // 在预览阶段也处理图片
+      const processedHtml = await processNotionImages(html)
+      previewContent.innerHTML = `<div id="nice">${processedHtml}</div>`
       this.updatePreviewTheme()
     }
   }
