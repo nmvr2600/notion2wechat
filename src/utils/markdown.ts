@@ -45,6 +45,12 @@ renderer.blockquote = function(text) {
   return `<blockquote class="multiquote-1">${text}</blockquote>`
 }
 
+// 重写图片渲染，确保图片能正确显示
+renderer.image = function(href, title, text) {
+  const titleAttr = title ? ` title="${title}"` : ''
+  return `<img src="${href}" alt="${text}"${titleAttr}>`
+}
+
 export function convertMarkdownToHtml(markdown: string, images: NotionImage[]): ConversionResult {
   marked.setOptions({
     renderer: renderer
