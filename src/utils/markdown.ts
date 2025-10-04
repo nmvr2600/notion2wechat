@@ -4,13 +4,35 @@ import { marked } from 'marked'
 // 自定义渲染器，确保HTML结构与CSS选择器匹配
 const renderer = new marked.Renderer()
 
-// 重写标题渲染，添加.content类
+// 重写标题渲染，添加.content类和prefix/suffix结构
 renderer.heading = function(text, level) {
-  return `
-    <h${level}>
-      <span class="content">${text}</span>
-    </h${level}>
-  `
+  if (level === 1) {
+    return `
+      <h${level}>
+        <span class="prefix"></span>
+        <span class="content">${text}</span>
+        <span class="suffix"></span>
+      </h${level}>
+    `
+  } else if (level === 2) {
+    return `
+      <h${level}>
+        <span class="prefix"></span>
+        <span class="content">${text}</span>
+        <span class="suffix"></span>
+      </h${level}>
+    `
+  } else if (level === 3) {
+    return `
+      <h${level}>
+        <span class="prefix"></span>
+        <span class="content">${text}</span>
+        <span class="suffix"></span>
+      </h${level}>
+    `
+  } else {
+    return `<h${level}>${text}</h${level}>`
+  }
 }
 
 // 重写列表项渲染
