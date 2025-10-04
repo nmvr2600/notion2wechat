@@ -314,9 +314,130 @@ class Notion2WeChat {
   }
 
   private extractMarkdownFromElement(element: Element): string {
-    // 简化的实现，实际需要根据Notion的DOM结构进行转换
-    const textContent = element.textContent || ''
-    return textContent
+    let markdown = ''
+    
+    // 递归遍历Notion页面内容
+    function traverseNode(node: Node): void {
+      if (node.nodeType === Node.TEXT_NODE) {
+        markdown += node.textContent || ''
+        return
+      }
+      
+      if (node.nodeType !== Node.ELEMENT_NODE) return
+      
+      const element = node as Element
+      const tagName = element.tagName.toLowerCase()
+      
+      switch (tagName) {
+        case 'h1':
+          markdown += `\n# ${element.textContent || ''}\n\n`
+          break
+        case 'h2':
+          markdown += `\n## ${element.textContent || ''}\n\n`
+          break
+        case 'h3':
+          markdown += `\n### ${element.textContent || ''}\n\n`
+          break
+        case 'p':
+          // 处理段落中的格式化内容
+          const paragraphContent = extractFormattedText(element)
+          markdown += `${paragraphContent}\n\n`
+          break
+        case 'ul':
+          markdown += '\n'
+          Array.from(element.children).forEach(li => {
+            markdown += `- ${extractFormattedText(li)}\n`
+          })
+          markdown += '\n'
+          break
+        case 'ol':
+          markdown += '\n'
+          Array.from(element.children).forEach((li, index) => {
+            markdown += `${index + 1}. ${extractFormattedText(li)}\n`
+          })
+          markdown += '\n'
+          break
+        case 'blockquote':
+          markdown += `> ${extractFormattedText(element)}\n\n`
+          break
+        case 'strong':
+        case 'b':
+          markdown += `**${element.textContent || ''}**`
+          break
+        case 'em':
+        case 'i':
+          markdown += `*${element.textContent || ''}*`
+          break
+        case 'code':
+          if (element.parentElement?.tagName.toLowerCase() === 'pre') {
+            // 代码块中的内联代码，不处理
+            markdown += element.textContent || ''
+          } else {
+            markdown += `\`${element.textContent || ''}\``
+          }
+          break
+        case 'pre':
+          markdown += `\`\`\`\n${element.textContent || ''}\n\`\`\`\n\n`
+          break
+        case 'a':
+          const href = element.getAttribute('href') || ''
+          const text = element.textContent || ''
+          markdown += `[${text}](${href})`
+          break
+        case 'img':
+          const src = element.getAttribute('src') || ''
+          const alt = element.getAttribute('alt') || ''
+          markdown += `![${alt}](${src})`
+          break
+        case 'hr':
+          markdown += '\n---\n\n'
+          break
+        case 'br':
+          markdown += '\n'
+          break
+        default:
+          // 对于其他元素，递归处理子节点
+          Array.from(element.childNodes).forEach(traverseNode)
+      }
+    }
+    
+    // 提取格式化文本的辅助函数
+    function extractFormattedText(element: Element): string {
+      let text = ''
+      Array.from(element.childNodes).forEach(child => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          text += child.textContent || ''
+        } else if (child.nodeType === Node.ELEMENT_NODE) {
+          const childElement = child as Element
+          const tagName = childElement.tagName.toLowerCase()
+          
+          switch (tagName) {
+            case 'strong':
+            case 'b':
+              text += `**${childElement.textContent || ''}**`
+              break
+            case 'em':
+            case 'i':
+              text += `*${childElement.textContent || ''}*`
+              break
+            case 'code':
+              text += `\`${childElement.textContent || ''}\``
+              break
+            case 'a':
+              const href = childElement.getAttribute('href') || ''
+              const linkText = childElement.textContent || ''
+              text += `[${linkText}](${href})`
+              break
+            default:
+              Array.from(childElement.childNodes).forEach(traverseNode)
+          }
+        }
+      })
+      return text
+    }
+    
+    Array.from(element.childNodes).forEach(traverseNode)
+    return markdown.trim()
   }
 
   private showPreview(html: string) {
