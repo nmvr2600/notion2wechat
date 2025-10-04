@@ -53,7 +53,9 @@ renderer.image = function(href, title, text) {
 
 export function convertMarkdownToHtml(markdown: string, images: NotionImage[]): ConversionResult {
   marked.setOptions({
-    renderer: renderer
+    renderer: renderer,
+    breaks: true,
+    gfm: true
   })
   
   const html = marked(markdown)

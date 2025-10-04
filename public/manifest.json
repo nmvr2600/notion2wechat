@@ -14,7 +14,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["blue.css", "red.css"],
+      "resources": ["*.css"],
       "matches": ["https://www.notion.so/*"]
     }
   ],

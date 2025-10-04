@@ -38,10 +38,15 @@ class Notion2WeChat {
     this.button?.addEventListener('click', () => this.openSidebar())
   }
 
-  private openSidebar() {
+  private async openSidebar() {
     if (this.sidebar) {
       this.closeSidebar()
       return
+    }
+    
+    // 确保主题已加载
+    if (this.availableThemes.length <= 1) {
+      await this.loadThemes()
     }
     
     this.createSidebar()
@@ -101,8 +106,8 @@ class Notion2WeChat {
     this.sidebar = document.createElement('div')
     this.sidebar.className = 'notion2wechat-sidebar'
     
-    // 确保主题已加载
-    const themesToRender = this.availableThemes.length > 1 ? this.availableThemes : [defaultTheme]
+    // 使用已加载的主题
+    const themesToRender = this.availableThemes
     
     this.sidebar.innerHTML = `
       <div class="sidebar-header">
@@ -294,13 +299,24 @@ class Notion2WeChat {
       const titleElement = document.querySelector('[placeholder="Untitled"]') as HTMLElement
       const title = titleElement?.innerText || '无标题'
 
-      const contentElement = document.querySelector('.notion-page-content')
+      // 尝试找到正确的页面内容容器
+      const contentElement = document.querySelector('.notion-page-content') || 
+                            document.querySelector('.notion-scroller') ||
+                            document.querySelector('[data-block-id]') ||
+                            document.body
+      
       if (!contentElement) {
         return null
       }
 
+      console.log('Found content element:', contentElement.className)
+      console.log('Element children count:', contentElement.children.length)
+
       // 使用剪贴板API获取Notion页面的Markdown内容
       const content = await this.extractMarkdownFromElement(contentElement)
+      
+      console.log('Extracted content length:', content.length)
+      console.log('Content preview:', content.substring(0, 200))
 
       return {
         title,
@@ -315,31 +331,40 @@ class Notion2WeChat {
 
   private async extractMarkdownFromElement(element: Element): Promise<string> {
     try {
-      // 使用剪贴板API获取Notion页面的Markdown内容
-      // 先选中整个页面内容
-      const range = document.createRange()
-      range.selectNodeContents(element)
-      
       const selection = window.getSelection()
       if (selection) {
+        // 清除之前的选择
         selection.removeAllRanges()
-        selection.addRange(range)
         
-        // 执行复制命令
+        // 第一次选择：选择当前block（模拟第一次Cmd+A）
+        const range1 = document.createRange()
+        range1.selectNodeContents(element)
+        selection.addRange(range1)
+        
+        // 执行第一次复制命令
         document.execCommand('copy')
+        
+        // 等待一小段时间确保第一次操作完成
+        await new Promise(resolve => setTimeout(resolve, 50))
+        
+        // 第二次选择：重新选择整个页面内容（模拟第二次Cmd+A）
+        selection.removeAllRanges()
+        const range2 = document.createRange()
+        range2.selectNodeContents(element)
+        selection.addRange(range2)
+        
+        // 执行第二次复制命令，这次应该能复制整个页面内容
+        document.execCommand('copy')
+        
+        // 尝试从剪贴板读取Markdown内容
+        const clipboardText = await navigator.clipboard.readText()
         
         // 清除选择
         selection.removeAllRanges()
         
-        // 从剪贴板读取Markdown内容
-        const clipboardItems = await navigator.clipboard.read()
-        for (const item of clipboardItems) {
-          for (const type of item.types) {
-            if (type === 'text/plain') {
-              const text = await item.getType(type)
-              return await text.text()
-            }
-          }
+        // 如果剪贴板中有内容，直接返回
+        if (clipboardText.trim()) {
+          return clipboardText
         }
       }
       
@@ -352,12 +377,19 @@ class Notion2WeChat {
     }
   }
 
+  
+
   private async showPreview(html: string) {
     const previewContent = this.sidebar?.querySelector('#preview-content')
     if (previewContent) {
       // 在预览阶段也处理图片
       const processedHtml = await processNotionImages(html)
       previewContent.innerHTML = `<div id="nice">${processedHtml}</div>`
+      
+      // 确保主题已加载再应用样式
+      if (this.availableThemes.length <= 1) {
+        await this.loadThemes()
+      }
       this.updatePreviewTheme()
     }
   }
@@ -383,7 +415,21 @@ class Notion2WeChat {
     const previewContent = this.sidebar?.querySelector('#preview-content')
     if (!previewContent) return
     
-    const theme = this.getCurrentTheme() || defaultTheme
+    const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
+    let theme: Theme | null = null
+    
+    if (themeSelect && this.availableThemes.length > 1) {
+      // 从可用主题中查找
+      const selectedThemeName = themeSelect.value
+      theme = this.availableThemes.find(t => t.name === selectedThemeName) || null
+    }
+    
+    // 如果没有找到主题，使用默认主题
+    if (!theme) {
+      theme = defaultTheme
+    }
+    
+    console.log('Applying theme:', theme.name, 'Available themes:', this.availableThemes.map(t => t.name))
     
     // 移除现有的主题样式
     const existingStyle = previewContent.querySelector('#preview-theme-style')
