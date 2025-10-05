@@ -355,9 +355,9 @@ class Notion2WeChat {
 
     try {
       // 转换Markdown为HTML，首先处理图片URL
-      const processedMarkdown = convertNotionImageUrls(notionData.content)
-      console.log('Processed markdown:', processedMarkdown) // 调试信息
-      const result = await convertMarkdownToHtml(processedMarkdown, [])
+      // const processedMarkdown = convertNotionImageUrls(notionData.content)
+      // console.log('Processed markdown:', processedMarkdown) // 调试信息
+      const result = await convertMarkdownToHtml(notionData.content, [])
       console.log('Generated HTML:', result.html) // 调试信息
       await this.showPreview(result.html)
 

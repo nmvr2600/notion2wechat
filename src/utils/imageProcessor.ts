@@ -30,11 +30,8 @@ export async function processNotionImages(html: string): Promise<string> {
  */
 async function processImage(img: HTMLImageElement): Promise<void> {
   // 先从属性中获取原始src值，避免浏览器自动解码
-  let src = img.getAttribute('src') || ''
+  const src = img.getAttribute('src') || ''
   console.log('Processing image with src:', src)
-
-  // 修复HTML实体编码问题 - 必须在处理URL之前进行
-  src = fixHtmlEntities(src, img)
 
   // 处理Notion的attachment格式
   if (src.includes('attachment:')) {
@@ -122,7 +119,7 @@ function findMatchingImage(src: string): HTMLImageElement | null {
 }
 
 /**
-* 将找到的图片转换为base64格式并更新目标图片元素
+ * 将找到的图片转换为base64格式并更新目标图片元素
  * 使用canvas将图片转换为base64编码，以避免跨域问题
  * @param foundImage - 已找到并加载的图片元素
  * @param targetImg - 需要更新的目标图片元素
