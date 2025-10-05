@@ -5,73 +5,54 @@ import { marked } from 'marked'
 const renderer = new marked.Renderer()
 
 // 重写标题渲染，添加.content类和prefix/suffix结构
-renderer.heading = function(text, level) {
-  if (level === 1) {
-    return `
+renderer.heading = (text: string, level: number): string => {
+  if (level === 1) return `
       <h${level}>
         <span class="prefix"></span>
         <span class="content">${text}</span>
         <span class="suffix"></span>
       </h${level}>
     `
-  } else if (level === 2) {
-    return `
+  if (level === 2) return `
       <h${level}>
         <span class="prefix"></span>
         <span class="content">${text}</span>
         <span class="suffix"></span>
       </h${level}>
     `
-  } else if (level === 3) {
-    return `
+  if (level === 3) return `
       <h${level}>
         <span class="prefix"></span>
         <span class="content">${text}</span>
         <span class="suffix"></span>
       </h${level}>
     `
-  } else {
-    return `<h${level}>${text}</h${level}>`
-  }
+  return `<h${level}>${text}</h${level}>`
 }
 
 // 重写列表项渲染
-renderer.listitem = function(text) {
-  return `<li><section>${text}</section></li>`
-}
+renderer.listitem = (text: string): string => `<li><section>${text}</section></li>`
 
 // 重写引用渲染
-renderer.blockquote = function(text) {
-  return `<blockquote class="multiquote-1">${text}</blockquote>`
-}
+renderer.blockquote = (text: string): string => `<blockquote class="multiquote-1">${text}</blockquote>`
 
 // 重写图片渲染，确保图片能正确显示
-renderer.image = function(href, title, text) {
-  // 修复HTML实体编码问题
-  if (href.includes('&')) {
-    href = href.replace(/&/g, '&');
-  }
-  
+renderer.image = (href: string, title: string | null, text: string): string => {
+  const cleanHref = href.includes('&') ? href.replace(/&/g, '&') : href
   const titleAttr = title ? ` title="${title}"` : ''
-  return `<img src="${href}" alt="${text}"${titleAttr}>`
+  return `<img src="${cleanHref}" alt="${text}"${titleAttr}>`
 }
 
 export function convertMarkdownToHtml(markdown: string, images: NotionImage[]): ConversionResult {
-  marked.setOptions({
-    renderer: renderer,
-    breaks: true,
-    gfm: true
-  })
-  
+  marked.setOptions({ renderer, breaks: true, gfm: true })
   const html = marked(markdown)
   return { html, images }
 }
 export function extractImagesFromMarkdown(markdown: string): NotionImage[] {
   const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g
   const images: NotionImage[] = []
-  let match
-  while ((match = imageRegex.exec(markdown)) !== null) {
-    images.push({ originalUrl: match[2] })
+  for (const m of markdown.matchAll(imageRegex)) {
+    images.push({ originalUrl: m[2] })
   }
   return images
 }
@@ -105,39 +86,27 @@ User ID: 1d4d872b-594c-81a1-91fd-000244fc4a14
 }
 
 export function convertNotionImageUrls(markdown: string): string {
-  // 在URL中查找页面ID
-  const pageIdMatch = markdown.match(/([a-f0-9]{32})/);
-  const pageId = pageIdMatch ? pageIdMatch[1] : null;
-  
+  const pageIdMatch = markdown.match(/([a-f0-9]{32})/)
+  const pageId = pageIdMatch ? pageIdMatch[1] : null
   return markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
-    // 处理attachment格式的图片URL
     if (url.startsWith('attachment:')) {
-      // 提取attachment ID和文件名
-      const attachmentMatch = url.match(/attachment:([a-f0-9-]+):([^?]+)/);
+      const attachmentMatch = url.match(/attachment:([a-f0-9-]+):([^?]+)/)
       if (attachmentMatch && pageId) {
-        const fileName = attachmentMatch[2];
-        // 构建正确的Notion图片URL，包含所有必要的参数
-        const convertedUrl = `https://www.notion.so/image/${encodeURIComponent(fileName)}?id=${pageId}&table=block&width=1024&userId=v&cache=v2`;
-        return `![${alt}](${convertedUrl})`;
+        const fileName = attachmentMatch[2]
+        const convertedUrl = `https://www.notion.so/image/${encodeURIComponent(fileName)}?id=${pageId}&table=block&width=1024&userId=v&cache=v2`
+        return `![${alt}](${convertedUrl})`
       }
     }
-    
-    // 修复HTML实体编码问题
-    if (url.includes('&')) {
-      url = url.replace(/&/g, '&');
+    const cleanUrl = url.includes('&') ? url.replace(/&/g, '&') : url
+    if (cleanUrl.includes('https://www.notion.so/image/') && cleanUrl.includes('id=') && cleanUrl.includes('table=')) {
+      return `![${alt}](${cleanUrl})`
     }
-    
-    // 处理已经包含完整参数的Notion图片URL
-    if (url.includes('https://www.notion.so/image/') && url.includes('id=') && url.includes('table=')) {
-      return `![${alt}](${url})`;
+    if (cleanUrl.includes('notion.so') || cleanUrl.includes('file.notion.so')) {
+      const convertedUrl = convertNotionImageUrl(cleanUrl)
+      return `![${alt}](${convertedUrl})`
     }
-    
-    if (url.includes('notion.so') || url.includes('file.notion.so')) {
-      const convertedUrl = convertNotionImageUrl(url);
-      return `![${alt}](${convertedUrl})`;
-    }
-    return match;
-  });
+    return match
+  })
 }
 function convertNotionImageUrl(url: string): string {
   if (url.includes('file.notion.so')) {
