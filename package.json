@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "icons": "node scripts/gen-icons.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
@@ -19,7 +20,8 @@
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",
-    "vite": "^4.4.11"
+    "vite": "^4.4.11",
+    "sharp": "^0.33.5"
   },
   "dependencies": {
     "marked": "^9.1.2"

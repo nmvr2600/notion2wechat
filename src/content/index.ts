@@ -63,10 +63,23 @@ class Notion2WeChat {
     this.button = document.createElement('div')
     this.button.id = 'notion2wechat-button'
     this.button.innerHTML = `
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg width="24" height="24" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <rect width="128" height="128" rx="20" fill="url(#bgGradient)"/>
+        <path d="M30 30L30 95L40 95L65 50L65 95L75 95L75 30L65 30L40 75L40 30L30 30Z" fill="white"/>
+        <g transform="translate(70, 50)">
+          <rect x="0" y="0" width="35" height="25" rx="5" fill="#07c160"/>
+          <path d="M8 25L12 30L16 25" fill="#07c160"/>
+          <rect x="6" y="6" width="15" height="2" rx="1" fill="white"/>
+          <rect x="6" y="11" width="23" height="2" rx="1" fill="white"/>
+          <rect x="6" y="16" width="18" height="2" rx="1" fill="white"/>
+        </g>
+        <path d="M20 105L108 105" stroke="white" stroke-width="2" stroke-opacity="0.3"/>
       </svg>
     `
     this.button.style.cssText = `
