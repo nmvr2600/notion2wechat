@@ -433,12 +433,7 @@ class Notion2WeChat {
   }
 
   private getThemeDisplayName(themeName: string): string {
-    const displayNames: Record<string, string> = {
-      'default': '默认主题',
-      'blue': '蓝色主题',
-      'red': '红色主题'
-    }
-    return displayNames[themeName] || themeName
+    return themeName
   }
 
   private updatePreviewTheme() {
