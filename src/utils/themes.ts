@@ -148,6 +148,46 @@ const blue = `
 #nice .footnote-ref {
   color:rgb(37,132,181);
 }
+
+/* 代码块样式 */
+#nice pre {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#nice pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #d4d4d4;
+}
+
+/* 行内代码样式 */
+#nice .inline-code {
+  background-color: rgba(37, 132, 181, 0.1);
+  color: #2584b5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+
+/* Shiki 生成的代码块样式调整 */
+#nice pre.shiki {
+  margin: 16px 0 !important;
+  border-radius: 8px !important;
+  overflow-x: auto !important;
+}
+
+#nice pre.shiki code {
+  display: block !important;
+}
 `
 
 const red = `
@@ -331,6 +371,46 @@ const red = `
 #nice p code,
 #nice li code {
     color: rgb(271, 93, 108);
+}
+
+/* 代码块样式 */
+#nice pre {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#nice pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #d4d4d4;
+}
+
+/* 行内代码样式 */
+#nice .inline-code {
+  background-color: rgba(248, 57, 41, 0.1);
+  color: #f83929;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+
+/* Shiki 生成的代码块样式调整 */
+#nice pre.shiki {
+  margin: 16px 0 !important;
+  border-radius: 8px !important;
+  overflow-x: auto !important;
+}
+
+#nice pre.shiki code {
+  display: block !important;
 }
 
 /* 表格内的单元格 */
@@ -641,6 +721,46 @@ const black = `
   color:#ff6441;
 }
 
+/* 代码块样式 */
+#nice pre {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#nice pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #d4d4d4;
+}
+
+/* 行内代码样式 */
+#nice .inline-code {
+  background-color: rgba(255, 100, 65, 0.1);
+  color: #ff6441;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+
+/* Shiki 生成的代码块样式调整 */
+#nice pre.shiki {
+  margin: 16px 0 !important;
+  border-radius: 8px !important;
+  overflow-x: auto !important;
+}
+
+#nice pre.shiki code {
+  display: block !important;
+}
+
 /* 非微信代码块
  * 代码块不换行 display: -webkit-box !important;
  * 代码块换行 display: block;
@@ -909,6 +1029,46 @@ const yellow = `
   margin: 3px;
 }
 
+/* 代码块样式 */
+#nice pre {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#nice pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #d4d4d4;
+}
+
+/* 行内代码样式 */
+#nice .inline-code {
+  background-color: rgba(249, 191, 69, 0.1);
+  color: #9b6e23;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+
+/* Shiki 生成的代码块样式调整 */
+#nice pre.shiki {
+  margin: 16px 0 !important;
+  border-radius: 8px !important;
+  overflow-x: auto !important;
+}
+
+#nice pre.shiki code {
+  display: block !important;
+}
+
 /* 非微信代码块
  * 代码块不换行 display: -webkit-box !important;
  * 代码块换行 display: block;
@@ -980,10 +1140,67 @@ const yellow = `
 }
 `
 
+// VS Code 2025 风格的代码高亮样式
+const vscodeCodeStyles = `
+/* 代码块样式 */
+#nice pre {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#nice pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #d4d4d4;
+}
+
+/* 行内代码样式 */
+#nice .inline-code {
+  background-color: rgba(110, 118, 129, 0.2);
+  color: #d73a49;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+
+/* Shiki 生成的代码块样式调整 */
+#nice pre.shiki {
+  margin: 16px 0 !important;
+  border-radius: 8px !important;
+  overflow-x: auto !important;
+}
+
+#nice pre.shiki code {
+  display: block !important;
+}
+
+/* 代码语言标签 */
+#nice pre.shiki .language-id {
+  position: absolute;
+  top: 0;
+  right: 12px;
+  padding: 4px 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #8c8c8c;
+  font-size: 12px;
+  border-radius: 0 0 4px 4px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+`
+
 // 默认主题
 export const defaultTheme: Theme = {
   name: '默认',
-  styles: ` #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice img { max-width: 100%; height: auto; display: block; margin: 15px auto; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } #nice code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace; } #nice pre { background-color: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; margin: 15px 0; } #nice pre code { background-color: transparent; padding: 0; } #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } `,
+  styles: ` #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice img { max-width: 100%; height: auto; display: block; margin: 15px auto; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } ${vscodeCodeStyles} #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } `,
 }
 
 // 蓝色主题

@@ -14,7 +14,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["*.css"],
+      "resources": ["*.css", "*.js", "*.wasm", "assets/*", "assets/**/*"],
       "matches": ["https://www.notion.so/*"]
     }
   ],

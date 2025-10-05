@@ -357,7 +357,7 @@ class Notion2WeChat {
       // 转换Markdown为HTML，首先处理图片URL
       const processedMarkdown = convertNotionImageUrls(notionData.content)
       console.log('Processed markdown:', processedMarkdown) // 调试信息
-      const result = convertMarkdownToHtml(processedMarkdown, [])
+      const result = await convertMarkdownToHtml(processedMarkdown, [])
       console.log('Generated HTML:', result.html) // 调试信息
       await this.showPreview(result.html)
 
@@ -537,11 +537,19 @@ class Notion2WeChat {
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = html
 
-    // 首先清除所有元素的内联样式
+    // 首先清除所有元素的内联样式，但保留代码块的样式
     const allElements = tempDiv.querySelectorAll('*')
     for (const element of Array.from(allElements)) {
       const htmlElement = element as HTMLElement
-      htmlElement.style.cssText = ''
+      
+      // 如果是代码块或包含代码高亮样式，不清除其内联样式
+      const isCodeBlock = element.tagName === 'PRE' || 
+                         (element.tagName === 'CODE' && element.parentElement?.tagName === 'PRE') ||
+                         element.innerHTML.includes('style="color:')
+      
+      if (!isCodeBlock) {
+        htmlElement.style.cssText = ''
+      }
     }
 
     const cssRules = this.parseCssRules(theme.styles)
@@ -550,7 +558,14 @@ class Notion2WeChat {
       const elements = tempDiv.querySelectorAll(rule.selector)
       for (const element of Array.from(elements)) {
         const htmlElement = element as HTMLElement
-        htmlElement.style.cssText = rule.styles
+        
+        // 如果是代码块，不覆盖其内联样式
+        const isCodeBlock = element.tagName === 'PRE' || 
+                           (element.tagName === 'CODE' && element.parentElement?.tagName === 'PRE')
+        
+        if (!isCodeBlock) {
+          htmlElement.style.cssText = rule.styles
+        }
       }
     }
 
