@@ -123,6 +123,7 @@ class Notion2WeChat {
     const themesToRender = this.availableThemes
 
     this.sidebar.innerHTML = `
+      <div class="resize-handle"></div>
       <div class="sidebar-header">
         <button class="close-btn">&times;</button>
         <div class="controls">
@@ -148,6 +149,8 @@ class Notion2WeChat {
       top: 0;
       right: 0;
       width: 400px;
+      min-width: 300px;
+      max-width: 800px;
       height: 100vh;
       background: white;
       box-shadow: -4px 0 12px rgba(0,0,0,0.15);
@@ -155,6 +158,8 @@ class Notion2WeChat {
       transform: translateX(100%);
       transition: transform 0.3s ease;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      resize: horizontal;
+      overflow: auto;
     `
 
     // 添加样式
@@ -162,6 +167,22 @@ class Notion2WeChat {
     style.textContent = `
       .notion2wechat-sidebar * {
         box-sizing: border-box;
+      }
+      .resize-handle {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: transparent;
+        cursor: col-resize;
+        z-index: 10;
+      }
+      .resize-handle:hover {
+        background: rgba(59, 130, 246, 0.3);
+      }
+      .resize-handle:active {
+        background: rgba(59, 130, 246, 0.5);
       }
       .sidebar-header {
         padding: 12px 16px;
@@ -257,6 +278,7 @@ class Notion2WeChat {
     const generateBtn = this.sidebar?.querySelector('#generate-btn')
     const publishBtn = this.sidebar?.querySelector('#publish-btn')
     const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
+    const resizeHandle = this.sidebar?.querySelector('.resize-handle')
 
     closeBtn?.addEventListener('click', () => this.closeSidebar())
     generateBtn?.addEventListener('click', () => this.generateContent())
@@ -265,6 +287,44 @@ class Notion2WeChat {
     if (themeSelect) {
       themeSelect.addEventListener('change', () => this.updatePreviewTheme())
     }
+
+    // 添加拖动调整宽度功能
+    if (resizeHandle) {
+      this.setupResizeHandler(resizeHandle as HTMLElement)
+    }
+  }
+
+  private setupResizeHandler(handle: HTMLElement) {
+    let isResizing = false
+    let startX = 0
+    let startWidth = 0
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isResizing = true
+      startX = e.clientX
+      startWidth = this.sidebar!.offsetWidth
+      document.body.style.cursor = 'col-resize'
+      document.body.style.userSelect = 'none'
+      e.preventDefault()
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return
+
+      const deltaX = startX - e.clientX
+      const newWidth = Math.max(300, Math.min(800, startWidth + deltaX))
+      this.sidebar!.style.width = `${newWidth}px`
+    }
+
+    const handleMouseUp = () => {
+      isResizing = false
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+
+    handle.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
   }
 
   private closeSidebar() {
