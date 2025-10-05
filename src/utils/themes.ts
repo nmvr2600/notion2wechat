@@ -989,23 +989,23 @@ export const defaultTheme: Theme = {
 // 蓝色主题
 export const blueTheme: Theme = {
   name: '蓝色',
-  styles: blue
+  styles: blue,
 }
 
 // 红色主题
 export const redTheme: Theme = {
   name: '红色',
-  styles: red
+  styles: red,
 }
 
 export const blackTheme: Theme = {
   name: '黑色',
-  styles: black
+  styles: black,
 }
 
 export const yellowTheme: Theme = {
   name: '黄色',
-  styles: yellow
+  styles: yellow,
 }
 
 // 获取所有主题

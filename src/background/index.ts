@@ -1,12 +1,19 @@
 chrome.runtime.onInstalled.addListener(() => {
   console.log('Notion2WeChat extension installed')
 })
+
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.action === 'convertContent') {
-    handleContentConversion(request.data).then(sendResponse)
+    handleContentConversion(request.data)
+      .then(sendResponse)
+      .catch((error) => {
+        console.error('Conversion failed:', error)
+        sendResponse({ error: 'Conversion failed' })
+      })
     return true
   }
 })
+
 async function handleContentConversion(data: unknown) {
   try {
     const response = await fetch('https://api.example.com/convert', {

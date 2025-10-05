@@ -6,21 +6,24 @@ const renderer = new marked.Renderer()
 
 // 重写标题渲染，添加.content类和prefix/suffix结构
 renderer.heading = (text: string, level: number): string => {
-  if (level === 1) return `
+  if (level === 1)
+    return `
       <h${level}>
         <span class="prefix"></span>
         <span class="content">${text}</span>
         <span class="suffix"></span>
       </h${level}>
     `
-  if (level === 2) return `
+  if (level === 2)
+    return `
       <h${level}>
         <span class="prefix"></span>
         <span class="content">${text}</span>
         <span class="suffix"></span>
       </h${level}>
     `
-  if (level === 3) return `
+  if (level === 3)
+    return `
       <h${level}>
         <span class="prefix"></span>
         <span class="content">${text}</span>
@@ -34,7 +37,8 @@ renderer.heading = (text: string, level: number): string => {
 renderer.listitem = (text: string): string => `<li><section>${text}</section></li>`
 
 // 重写引用渲染
-renderer.blockquote = (text: string): string => `<blockquote class="multiquote-1">${text}</blockquote>`
+renderer.blockquote = (text: string): string =>
+  `<blockquote class="multiquote-1">${text}</blockquote>`
 
 // 重写图片渲染，确保图片能正确显示
 renderer.image = (href: string, title: string | null, text: string): string => {
@@ -68,21 +72,21 @@ This is a test page with an image.
 Page ID: 282ffe254a8180cb8a27e65f8fdd9ab3
 Space ID: 658ffe25-4a81-81ea-aa0e-00032dd638f4
 User ID: 1d4d872b-594c-81a1-91fd-000244fc4a14
-`;
+`
 
-  console.log('Testing with sample Markdown:');
-  const result = convertNotionImageUrls(testMarkdown);
-  console.log('Result:');
-  console.log(result);
-  
+  console.log('Testing with sample Markdown:')
+  const result = convertNotionImageUrls(testMarkdown)
+  console.log('Result:')
+  console.log(result)
+
   // 检查结果中是否包含正确的URL
   if (result.includes('attachment%3A493652ed-b92c-4625-adda-f43768fe2443%3Aimage.png')) {
-    console.log('✅ URL format is correct');
+    console.log('✅ URL format is correct')
   } else {
-    console.log('❌ URL format is incorrect');
+    console.log('❌ URL format is incorrect')
   }
-  
-  return result;
+
+  return result
 }
 
 export function convertNotionImageUrls(markdown: string): string {
@@ -98,7 +102,11 @@ export function convertNotionImageUrls(markdown: string): string {
       }
     }
     const cleanUrl = url.includes('&') ? url.replace(/&/g, '&') : url
-    if (cleanUrl.includes('https://www.notion.so/image/') && cleanUrl.includes('id=') && cleanUrl.includes('table=')) {
+    if (
+      cleanUrl.includes('https://www.notion.so/image/') &&
+      cleanUrl.includes('id=') &&
+      cleanUrl.includes('table=')
+    ) {
       return `![${alt}](${cleanUrl})`
     }
     if (cleanUrl.includes('notion.so') || cleanUrl.includes('file.notion.so')) {

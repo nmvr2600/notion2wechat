@@ -1,8 +1,11 @@
 import type { NotionPageData, Theme } from '@/types'
-import { defaultTheme, getAllThemes } from '@/utils/themes'
 import { processNotionImages } from '@/utils/imageProcessor'
-import { convertMarkdownToHtml, convertNotionImageUrls, testConvertNotionImageUrls } from '@/utils/markdown'
-
+import {
+  convertMarkdownToHtml,
+  convertNotionImageUrls,
+  testConvertNotionImageUrls,
+} from '@/utils/markdown'
+import { defaultTheme, getAllThemes } from '@/utils/themes'
 
 class Notion2WeChat {
   private sidebar: HTMLElement | null = null
@@ -15,13 +18,16 @@ class Notion2WeChat {
 
   private init() {
     // 测试URL转换逻辑
-    testConvertNotionImageUrls();
-    
+    testConvertNotionImageUrls()
+
     this.createFloatingButton()
     this.attachButtonEvent()
     // 加载主题
     this.loadThemes()
-    console.log('Themes loaded:', this.availableThemes.map(t => t.name))
+    console.log(
+      'Themes loaded:',
+      this.availableThemes.map((t) => t.name)
+    )
   }
 
   private loadThemes() {
@@ -42,17 +48,17 @@ class Notion2WeChat {
       this.closeSidebar()
       return
     }
-    
+
     this.createSidebar()
     if (this.sidebar) document.body.appendChild(this.sidebar)
-    
+
     // 显示侧边栏
     setTimeout(() => {
       if (this.sidebar) {
         this.sidebar.style.transform = 'translateX(0)'
       }
     }, 10)
-    
+
     this.attachSidebarEvents()
   }
 
@@ -112,18 +118,21 @@ class Notion2WeChat {
   private createSidebar() {
     this.sidebar = document.createElement('div')
     this.sidebar.className = 'notion2wechat-sidebar'
-    
+
     // 使用已加载的主题
     const themesToRender = this.availableThemes
-    
+
     this.sidebar.innerHTML = `
       <div class="sidebar-header">
         <button class="close-btn">&times;</button>
         <div class="controls">
           <select id="theme-select">
-            ${themesToRender.map(theme => 
-              `<option value="${theme.name}">${this.getThemeDisplayName(theme.name)}</option>`
-            ).join('')}
+            ${themesToRender
+              .map(
+                (theme) =>
+                  `<option value="${theme.name}">${this.getThemeDisplayName(theme.name)}</option>`
+              )
+              .join('')}
           </select>
           <button id="generate-btn" class="primary-btn">生成</button>
           <button id="publish-btn" class="secondary-btn" disabled>复制</button>
@@ -252,7 +261,7 @@ class Notion2WeChat {
     closeBtn?.addEventListener('click', () => this.closeSidebar())
     generateBtn?.addEventListener('click', () => this.generateContent())
     publishBtn?.addEventListener('click', () => this.copyContent())
-    
+
     if (themeSelect) {
       themeSelect.addEventListener('change', () => this.updatePreviewTheme())
     }
@@ -286,10 +295,10 @@ class Notion2WeChat {
 
     try {
       // 转换Markdown为HTML，首先处理图片URL
-      const processedMarkdown = convertNotionImageUrls(notionData.content);
-      console.log('Processed markdown:', processedMarkdown); // 调试信息
+      const processedMarkdown = convertNotionImageUrls(notionData.content)
+      console.log('Processed markdown:', processedMarkdown) // 调试信息
       const result = convertMarkdownToHtml(processedMarkdown, [])
-      console.log('Generated HTML:', result.html); // 调试信息
+      console.log('Generated HTML:', result.html) // 调试信息
       await this.showPreview(result.html)
 
       const publishBtn = this.sidebar?.querySelector('#publish-btn') as HTMLButtonElement
@@ -314,11 +323,12 @@ class Notion2WeChat {
       const title = titleElement?.innerText || '无标题'
 
       // 尝试找到正确的页面内容容器
-      const contentElement = document.querySelector('.notion-page-content') || 
-                            document.querySelector('.notion-scroller') ||
-                            document.querySelector('[data-block-id]') ||
-                            document.body
-      
+      const contentElement =
+        document.querySelector('.notion-page-content') ||
+        document.querySelector('.notion-scroller') ||
+        document.querySelector('[data-block-id]') ||
+        document.body
+
       if (!contentElement) {
         return null
       }
@@ -328,7 +338,7 @@ class Notion2WeChat {
 
       // 使用剪贴板API获取Notion页面的Markdown内容
       const content = await this.extractMarkdownFromElement(contentElement)
-      
+
       console.log('Extracted content length:', content.length)
       console.log('Content preview:', content.substring(0, 200))
 
@@ -349,43 +359,43 @@ class Notion2WeChat {
       if (selection) {
         // 清除之前的选择
         selection.removeAllRanges()
-        
+
         // 第一次选择：选择当前block（模拟第一次Cmd+A）
         const range1 = document.createRange()
         range1.selectNodeContents(element)
         selection.addRange(range1)
-        
+
         // 执行第一次复制命令
         document.execCommand('copy')
-        
+
         // 等待一小段时间确保第一次操作完成
-        await new Promise(resolve => setTimeout(resolve, 100))
-        
+        await new Promise((resolve) => setTimeout(resolve, 100))
+
         // 第二次选择：重新选择整个页面内容（模拟第二次Cmd+A）
         selection.removeAllRanges()
         const range2 = document.createRange()
         range2.selectNodeContents(element)
         selection.addRange(range2)
-        
+
         // 执行第二次复制命令，这次应该能复制整个页面内容
         document.execCommand('copy')
-        
+
         // 等待更长时间确保复制操作完成
-        await new Promise(resolve => setTimeout(resolve, 200))
-        
+        await new Promise((resolve) => setTimeout(resolve, 200))
+
         // 尝试从剪贴板读取Markdown内容
         const clipboardText = await navigator.clipboard.readText()
-        
+
         // 清除选择
         selection.removeAllRanges()
-        
+
         // 如果剪贴板中有内容，直接返回
         if (clipboardText.trim()) {
           console.log('Clipboard content:', clipboardText.substring(0, 200))
           return clipboardText
         }
       }
-      
+
       // 如果剪贴板方法失败，回退到textContent
       return element.textContent || ''
     } catch (error) {
@@ -395,24 +405,22 @@ class Notion2WeChat {
     }
   }
 
-  
-
   private async showPreview(html: string) {
     const previewContent = this.sidebar?.querySelector('#preview-content')
     if (previewContent) {
       // 在预览阶段也处理图片
       const processedHtml = await processNotionImages(html)
-      
+
       // 获取当前主题并应用内联样式
       const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
       const selectedThemeName = themeSelect?.value || 'default'
-      const theme = this.availableThemes.find(t => t.name === selectedThemeName) || defaultTheme
-      
+      const theme = this.availableThemes.find((t) => t.name === selectedThemeName) || defaultTheme
+
       // 将主题样式应用到HTML内容中
       const htmlWithInlineStyles = this.applyInlineStyles(processedHtml, theme)
-      
+
       previewContent.innerHTML = `<section id="nice">${htmlWithInlineStyles}</section>`
-      
+
       // 添加可选择的样式
       const pc = previewContent as HTMLElement
       pc.style.userSelect = 'text'
@@ -422,7 +430,6 @@ class Notion2WeChat {
     }
   }
 
-
   private getThemeDisplayName(themeName: string): string {
     return themeName
   }
@@ -430,50 +437,55 @@ class Notion2WeChat {
   private updatePreviewTheme() {
     const previewContent = this.sidebar?.querySelector('#preview-content')
     if (!previewContent) return
-    
+
     const niceElement = previewContent.querySelector('#nice') as HTMLElement
     if (!niceElement) return
-    
+
     const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
     let theme: Theme | null = null
-    
+
     if (themeSelect && this.availableThemes.length > 1) {
       // 从可用主题中查找
       const selectedThemeName = themeSelect.value
-      theme = this.availableThemes.find(t => t.name === selectedThemeName) || null
+      theme = this.availableThemes.find((t) => t.name === selectedThemeName) || null
     }
-    
+
     // 如果没有找到主题，使用默认主题
     if (!theme) {
       theme = defaultTheme
     }
-    
-    console.log('Applying theme:', theme.name, 'Available themes:', this.availableThemes.map(t => t.name))
-    
+
+    console.log(
+      'Applying theme:',
+      theme.name,
+      'Available themes:',
+      this.availableThemes.map((t) => t.name)
+    )
+
     // 获取当前HTML内容
     const currentHtml = niceElement.innerHTML
-    
+
     // 重新应用内联样式
     const htmlWithInlineStyles = this.applyInlineStyles(currentHtml, theme)
-    
+
     // 更新内容
     niceElement.innerHTML = htmlWithInlineStyles
   }
-  
+
   private applyInlineStyles(html: string, theme: Theme): string {
     // 创建临时DOM元素来解析HTML
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = html
-    
+
     // 首先清除所有元素的内联样式
     const allElements = tempDiv.querySelectorAll('*')
     for (const element of Array.from(allElements)) {
       const htmlElement = element as HTMLElement
       htmlElement.style.cssText = ''
     }
-    
+
     const cssRules = this.parseCssRules(theme.styles)
-    
+
     for (const rule of cssRules) {
       const elements = tempDiv.querySelectorAll(rule.selector)
       for (const element of Array.from(elements)) {
@@ -481,13 +493,13 @@ class Notion2WeChat {
         htmlElement.style.cssText = rule.styles
       }
     }
-    
+
     return tempDiv.innerHTML
   }
-  
-  private parseCssRules(cssText: string): Array<{selector: string, styles: string}> {
-    const rules: Array<{selector: string, styles: string}> = []
-    
+
+  private parseCssRules(cssText: string): Array<{ selector: string; styles: string }> {
+    const rules: Array<{ selector: string; styles: string }> = []
+
     // 简单的CSS解析器，处理基本的CSS规则
     const ruleRegex = /#nice\s+([^{]+)\s*{\s*([^}]+)\s*}/g
     for (const m of cssText.matchAll(ruleRegex)) {
@@ -496,44 +508,44 @@ class Notion2WeChat {
       const cleanSelector = selector.replace(/^#\w+\s+/, '')
       rules.push({ selector: cleanSelector, styles })
     }
-    
+
     return rules
   }
 
   private async copyContent() {
-    const preview = document.getElementById('preview-content');
-    if (!preview) return;
+    const preview = document.getElementById('preview-content')
+    if (!preview) return
 
     // 更新按钮状态
-    const copyBtn = document.getElementById('publish-btn') as HTMLButtonElement;
+    const copyBtn = document.getElementById('publish-btn') as HTMLButtonElement
     if (copyBtn) {
-      copyBtn.textContent = '复制中...';
-      copyBtn.disabled = true;
+      copyBtn.textContent = '复制中...'
+      copyBtn.disabled = true
     }
 
     try {
       // 获取预览区域的HTML，样式已经内联到元素中
-      const htmlContent = preview.innerHTML;
-      
+      const htmlContent = preview.innerHTML
+
       // 使用Clipboard API直接写入富文本HTML
-      console.log('写入剪贴板的HTML内容:', htmlContent);
-      console.log('HTML内容长度:', htmlContent.length);
-      
+      console.log('写入剪贴板的HTML内容:', htmlContent)
+      console.log('HTML内容长度:', htmlContent.length)
+
       await navigator.clipboard.write([
         new ClipboardItem({
-          'text/html': new Blob([htmlContent], { type: 'text/html' })
-        })
-      ]);
-      
-      alert('已复制到剪贴板，可以直接粘贴到公众号编辑器');
+          'text/html': new Blob([htmlContent], { type: 'text/html' }),
+        }),
+      ])
+
+      alert('已复制到剪贴板，可以直接粘贴到公众号编辑器')
     } catch (error) {
-      console.error('复制失败:', error);
-      alert('复制失败，请重试');
+      console.error('复制失败:', error)
+      alert('复制失败，请重试')
     } finally {
       // 恢复按钮状态
       if (copyBtn) {
-        copyBtn.textContent = '复制';
-        copyBtn.disabled = false;
+        copyBtn.textContent = '复制'
+        copyBtn.disabled = false
       }
     }
   }
