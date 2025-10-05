@@ -13,25 +13,24 @@ graph TD
     F --> G[用户点击生成按钮]
     G --> H[提取 Notion 页面内容]
     H --> I[获取页面 Markdown 内容]
-    I --> J[处理图片 URL 转换]
-    J --> K[使用 marked.js 转换 Markdown 为 HTML]
-    K --> L[应用代码语法高亮]
+    I --> J[使用 marked.js 转换 Markdown 为 HTML]
+    J --> K[应用代码语法高亮]
+    K --> L[处理图片为 base64 格式]
     L --> M[预览内容显示]
     M --> N{用户是否满意预览效果}
     
     N -->|不满意| F
     N -->|满意| O[用户点击复制按钮]
-    O --> P[处理图片为 base64 格式]
-    P --> Q[应用主题样式到 HTML 元素]
-    Q --> R[将 HTML 内容复制到剪贴板]
-    R --> S[提示用户复制成功]
-    S --> T[用户可粘贴到微信公众号编辑器]
+    O --> P[应用主题样式到 HTML 元素]
+    P --> Q[将 HTML 内容复制到剪贴板]
+    Q --> R[提示用户复制成功]
+    R --> S[用户可粘贴到微信公众号编辑器]
 
     style A fill:#e1f5fe
-    style T fill:#e8f5e8
+    style S fill:#e8f5e8
     style H fill:#fff3e0
-    style K fill:#fff3e0
-    style R fill:#f3e5f5
+    style J fill:#fff3e0
+    style Q fill:#f3e5f5
 ```
 
 ## 详细工作流程
@@ -69,14 +68,12 @@ sequenceDiagram
     
     extractNotionContent->>generateContent: 返回NotionPageData
     
-    Note over User, copyContent: 图片URL处理阶段
-    generateContent->>convertNotionImageUrls: convertNotionImageUrls(content)
-    convertNotionImageUrls->>generateContent: 返回处理后的Markdown
-    
     Note over User, copyContent: Markdown转HTML阶段
-    generateContent->>convertMarkdownToHtml: convertMarkdownToHtml(processedMarkdown, [])
+    generateContent->>convertMarkdownToHtml: convertMarkdownToHtml(content, [])
     convertMarkdownToHtml->>marked: marked(markdown)
     marked->>convertMarkdownToHtml: 返回HTML字符串
+    convertMarkdownToHtml->>convertMarkdownToHtml: 处理代码高亮
+    convertMarkdownToHtml->>generateContent: 返回HTML字符串和图片信息
     
     Note over User, copyContent: 图片预处理阶段
     generateContent->>processNotionImages: processNotionImages(html)
@@ -113,28 +110,34 @@ sequenceDiagram
 - 提取页面标题和内容
 
 ### 4. 内容转换阶段
-- 处理 Notion 图片 URL，尝试将 attachment 格式转换为标准的 Notion 图片 URL
- - 查找 Markdown 中的 attachment 格式图片链接，如 `attachment:uuid:image.png`
-  - 提取页面 ID 信息（从 Markdown 内容中匹配 32 位十六进制字符串）
-  - 将 attachment 格式转换为标准的 Notion 图片 URL，格式为：`https://www.notion.so/image/{encodeURIComponent(fileName)}?id={pageId}&table=block&width=1024&userId=v&cache=v2`
-  - 处理其他 Notion 图片 URL 格式，如 `file.notion.so` 到 `www.notion.so/image` 的转换
-  - 注意：这个步骤生成的 URL 仍然需要身份验证才能访问，实际显示图片依赖后续的 canvas 转换过程
 - 使用 marked.js 库将 Markdown 转换为 HTML
-  - 在 `src/utils/markdown.ts` 文件的 `convertMarkdownToHtml` 函数中，第 77 行调用 `marked(markdown)` 进行转换
-  - 该函数在 `src/content/index.ts` 的第 360 行被调用：`const result = await convertMarkdownToHtml(processedMarkdown, [])`
+  - 在 `src/utils/markdown.ts` 文件的 `convertMarkdownToHtml` 函数中，第 199 行调用 `marked(markdown)` 进行转换
+  - 该函数在 `src/content/index.ts` 的第 360 行被调用：`const result = await convertMarkdownToHtml(notionData.content, [])`
  - 应用自定义渲染器处理特殊元素（标题、代码块、引用等）
   - 对代码块进行语法高亮处理
+  - 处理图片 URL 中的 HTML 实体编码问题
+- 图片处理现在在 `processNotionImages` 函数中进行（而不是在 Markdown 转换阶段）
+  - 此步骤发生在 HTML 转换之后，预览显示之前
+  - 不再预先转换 attachment 格式图片 URL，而是直接处理
 
-### 5. 预览显示阶段
+### 5. 图片处理阶段
+- 在预览显示之前，对转换后的 HTML 进行图片处理
+- 遍历 HTML 中的图片元素，查找并转换 attachment 格式的图片为 base64 编码
+- 使用 canvas 技术将页面中的原始图片转换为 base64 格式，确保预览中图片正确加载
+
+### 6. 预览显示阶段
 - 将转换后的 HTML 应用所选主题样式
 - 在侧边栏预览区域显示转换后的内容
-- 处理图片显示问题，确保预览中图片正确加载
 
-### 6. 内容复制阶段
+### 7. 内容复制阶段
 - 用户点击"复制"按钮
 - 将预览内容转换为适合微信公众号编辑器的 HTML 格式
 - 将图片转换为 base64 格式以确保在公众号编辑器中正确显示
 - 使用 Clipboard API 将 HTML 内容写入剪贴板
+
+### 8. 输出阶段
+- 提示用户复制成功
+- 用户可在微信公众号编辑器中直接粘贴内容
 
 ### 7. 输出阶段
 - 提示用户复制成功
@@ -143,19 +146,16 @@ sequenceDiagram
 ## 关键技术点
 
 ### 图片处理机制
-1. **URL 预处理**: 在 Markdown 转换为 HTML 前，尝试将 Notion 的 attachment 格式图片 URL 转换为标准的 Notion 图片 URL
-   - 识别 `attachment:uuid:filename` 格式的图片链接
-   - 尝试从 Markdown 内容中提取 32 位页面 ID
-   - 如果找到页面 ID，则将 attachment 格式转换为标准的 Notion 图片 URL
-   - 如果未找到页面 ID，则 attachment 格式保持不变
-   - 注意：此步骤生成的 URL 仍然需要身份验证才能访问，并不能直接显示图片
+1. **URL 预处理**: 当前代码中已移除在 Markdown 转换为 HTML 前对 Notion 图片 URL 的预处理步骤
+   - 原先的 `convertNotionImageUrls` 函数仍然存在于代码中，但在 `convertMarkdownToHtml` 函数中未被调用
+   - 因此，Markdown 中的图片 URL（包括 attachment 格式）在转换为 HTML 时保持原始格式
 
 2. **预览处理**: 在预览阶段，通过 canvas 技术将页面中的图片转换为 base64 以确保正确显示
    - 调用 `processNotionImages` 函数处理转换后的 HTML
    - 遍历预览 HTML 中的所有 `<img>` 元素
    - 对于 attachment 格式的图片，通过 `findMatchingImage` 函数在当前页面中查找匹配的图片元素
    - 使用 canvas API 将找到的原始图片转换为 base64 数据 URI，并更新 `<img>` 标签的 src 属性
-   - 实际上，显示图片的关键步骤是通过 canvas 将原网页中的图片转换为 base64，而不是之前 URL 转换步骤
+   - 这是确保图片在预览中正确显示的关键步骤，特别是对于 attachment 格式的图片
 
 3. **复制处理**: 确保图片以适合微信公众号的格式输出
    - 复制时使用预览区域的 HTML 内容（其中部分图片已转换为 base64）
@@ -169,6 +169,7 @@ sequenceDiagram
 3. **动态切换**: 支持实时切换不同主题并更新预览
 
 ### 代码高亮
-1. **自定义渲染**: 使用 marked.js 的自定义渲染器处理代码块
-2. **语法识别**: 识别不同编程语言并应用相应高亮规则
+1. **自定义渲染**: 使用 marked.js 的自定义渲染器处理代码块，生成带有 `shiki-code` 类和 `data-language` 属性的代码块结构
+2. **语法识别**: 识别不同编程语言并存储在 `data-language` 属性中，为后续可能的语法高亮处理做准备
 3. **内联样式**: 使用内联样式确保在公众号编辑器中保持高亮效果
+4. **后处理**: 由于 marked 渲染器是同步的而语法高亮通常是异步操作，代码高亮在 `convertMarkdownToHtml` 函数中进行后处理
