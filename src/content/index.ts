@@ -2,15 +2,16 @@ import type { NotionPageData, Theme } from '@/types'
 import { processNotionImages } from '@/utils/imageProcessor'
 import {
   convertMarkdownToHtml,
-  convertNotionImageUrls,
   testConvertNotionImageUrls,
 } from '@/utils/markdown'
 import { defaultTheme, getAllThemes } from '@/utils/themes'
+import juice from 'juice/client'
 
 class Notion2WeChat {
   private sidebar: HTMLElement | null = null
   private button: HTMLElement | null = null
   private availableThemes: Theme[] = [defaultTheme]
+  private currentHtmlContent: string = '' // 保存当前的原始HTML内容
 
   constructor() {
     this.init()
@@ -359,6 +360,8 @@ class Notion2WeChat {
       // console.log('Processed markdown:', processedMarkdown) // 调试信息
       const result = await convertMarkdownToHtml(notionData.content, [])
       console.log('Generated HTML:', result.html) // 调试信息
+      // 保存原始HTML内容
+      this.currentHtmlContent = result.html
       await this.showPreview(result.html)
 
       const publishBtn = this.sidebar?.querySelector('#publish-btn') as HTMLButtonElement
@@ -471,15 +474,20 @@ class Notion2WeChat {
       // 在预览阶段也处理图片
       const processedHtml = await processNotionImages(html)
 
-      // 获取当前主题并应用内联样式
+      // 获取当前主题
       const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
       const selectedThemeName = themeSelect?.value || 'default'
       const theme = this.availableThemes.find((t) => t.name === selectedThemeName) || defaultTheme
 
-      // 将主题样式应用到HTML内容中
-      const htmlWithInlineStyles = this.applyInlineStyles(processedHtml, theme)
+      // 添加 highlight.js 的 CDN CSS 样式用于预览
+      const highlightJsStyles = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">`;
 
-      previewContent.innerHTML = `<section id="nice">${htmlWithInlineStyles}</section>`
+      // 使用 juice 内联 CSS 样式
+      const htmlWithStyles = `<section id="nice">${processedHtml}</section>`
+      const fullHtml = `${highlightJsStyles}<style>${theme.styles}</style>${htmlWithStyles}`
+      const inlinedHtml = juice(fullHtml, { removeStyleTags: false })
+
+      previewContent.innerHTML = inlinedHtml
 
       // 添加可选择的样式
       const pc = previewContent as HTMLElement
@@ -495,97 +503,19 @@ class Notion2WeChat {
   }
 
   private updatePreviewTheme() {
-    const previewContent = this.sidebar?.querySelector('#preview-content')
-    if (!previewContent) return
-
-    const niceElement = previewContent.querySelector('#nice') as HTMLElement
-    if (!niceElement) return
-
-    const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
-    let theme: Theme | null = null
-
-    if (themeSelect && this.availableThemes.length > 1) {
-      // 从可用主题中查找
-      const selectedThemeName = themeSelect.value
-      theme = this.availableThemes.find((t) => t.name === selectedThemeName) || null
-    }
-
-    // 如果没有找到主题，使用默认主题
-    if (!theme) {
-      theme = defaultTheme
-    }
-
-    console.log(
-      'Applying theme:',
-      theme.name,
-      'Available themes:',
-      this.availableThemes.map((t) => t.name)
-    )
-
-    // 获取当前HTML内容
-    const currentHtml = niceElement.innerHTML
-
-    // 重新应用内联样式
-    const htmlWithInlineStyles = this.applyInlineStyles(currentHtml, theme)
-
-    // 更新内容
-    niceElement.innerHTML = htmlWithInlineStyles
-  }
-
-  private applyInlineStyles(html: string, theme: Theme): string {
-    // 创建临时DOM元素来解析HTML
-    const tempDiv = document.createElement('div')
-    tempDiv.innerHTML = html
-
-    // 首先清除所有元素的内联样式，但保留代码块的样式
-    const allElements = tempDiv.querySelectorAll('*')
-    for (const element of Array.from(allElements)) {
-      const htmlElement = element as HTMLElement
-      
-      // 如果是代码块或包含代码高亮样式，不清除其内联样式
-      const isCodeBlock = element.tagName === 'PRE' || 
-                         (element.tagName === 'CODE' && element.parentElement?.tagName === 'PRE') ||
-                         element.innerHTML.includes('style="color:')
-      
-      if (!isCodeBlock) {
-        htmlElement.style.cssText = ''
+    // 使用保存的原始HTML内容重新生成预览以应用新主题
+    if (this.currentHtmlContent) {
+      const previewContent = this.sidebar?.querySelector('#preview-content')
+      if (previewContent) {
+        // 清除之前的内容
+        previewContent.innerHTML = ''
+        // 使用原始HTML内容重新显示预览以应用新主题
+        this.showPreview(this.currentHtmlContent)
       }
     }
-
-    const cssRules = this.parseCssRules(theme.styles)
-
-    for (const rule of cssRules) {
-      const elements = tempDiv.querySelectorAll(rule.selector)
-      for (const element of Array.from(elements)) {
-        const htmlElement = element as HTMLElement
-        
-        // 如果是代码块，不覆盖其内联样式
-        const isCodeBlock = element.tagName === 'PRE' || 
-                           (element.tagName === 'CODE' && element.parentElement?.tagName === 'PRE')
-        
-        if (!isCodeBlock) {
-          htmlElement.style.cssText = rule.styles
-        }
-      }
-    }
-
-    return tempDiv.innerHTML
   }
 
-  private parseCssRules(cssText: string): Array<{ selector: string; styles: string }> {
-    const rules: Array<{ selector: string; styles: string }> = []
-
-    // 简单的CSS解析器，处理基本的CSS规则
-    const ruleRegex = /#nice\s+([^{]+)\s*{\s*([^}]+)\s*}/g
-    for (const m of cssText.matchAll(ruleRegex)) {
-      const selector = m[1].trim()
-      const styles = m[2].trim()
-      const cleanSelector = selector.replace(/^#\w+\s+/, '')
-      rules.push({ selector: cleanSelector, styles })
-    }
-
-    return rules
-  }
+  
 
   private async copyContent() {
     const preview = document.getElementById('preview-content')
@@ -599,16 +529,29 @@ class Notion2WeChat {
     }
 
     try {
-      // 获取预览区域的HTML，样式已经内联到元素中
-      const htmlContent = preview.innerHTML
+      // 获取预览区域的HTML内容
+      const previewHtml = preview.innerHTML
+
+      // 获取当前主题
+      const themeSelect = document.querySelector('#theme-select') as HTMLSelectElement
+      const selectedThemeName = themeSelect?.value || 'default'
+      const theme = this.availableThemes.find((t) => t.name === selectedThemeName) || defaultTheme
+
+      // 添加 highlight.js 的 CDN CSS 样式用于导出
+      const highlightJsStyles = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">`;
+
+      // 使用 juice 内联 CSS 样式
+      const htmlWithStyles = `<section id="nice">${previewHtml}</section>`
+      const fullHtml = `${highlightJsStyles}<style>${theme.styles}</style>${htmlWithStyles}`
+      const inlinedHtml = juice(fullHtml, { removeStyleTags: true })
 
       // 使用Clipboard API直接写入富文本HTML
-      console.log('写入剪贴板的HTML内容:', htmlContent)
-      console.log('HTML内容长度:', htmlContent.length)
+      console.log('写入剪贴板的HTML内容:', inlinedHtml)
+      console.log('HTML内容长度:', inlinedHtml.length)
 
       await navigator.clipboard.write([
         new ClipboardItem({
-          'text/html': new Blob([htmlContent], { type: 'text/html' }),
+          'text/html': new Blob([inlinedHtml], { type: 'text/html' }),
         }),
       ])
 

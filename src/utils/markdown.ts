@@ -1,23 +1,7 @@
 import type { ConversionResult, NotionImage } from '@/types'
 import { marked } from 'marked'
-
-/**
- * 简单的代码高亮函数
- * 目前只添加基本的代码块结构，不进行实际的语法高亮
- * 
- * 这个函数是代码高亮功能的简化版本，由于之前尝试使用Shiki库失败后的备选方案。
- * 它只是简单地包装代码内容，添加必要的CSS类和属性，让主题样式表来处理基本的高亮效果。
- * 
- * @param code - 原始代码内容，通常来自Markdown中的代码块
- * @param language - 编程语言标识符（如'typescript', 'javascript', 'python'等），用于添加到HTML属性中
- * @returns 返回一个带有基本结构的HTML代码块字符串，包含pre标签和code标签，以及相应的CSS类
- */
-function simpleHighlight(code: string, language: string): string {
-  // 只添加语言类，让CSS处理高亮
-  // 使用data-language属性存储语言信息，便于后续可能的扩展
-  // 使用language-前缀的类名，便于CSS选择器匹配特定语言的样式
-  return `<pre class="code-block" data-language="${language}"><code class="language-${language}">${code}</code></pre>`
-}
+import { markedHighlight } from 'marked-highlight'
+import hljs from 'highlight.js'
 
 // 自定义渲染器，确保HTML结构与CSS选择器匹配
 // 
@@ -110,7 +94,7 @@ renderer.blockquote = (text: string): string =>
  * 确保图片URL中的&字符被正确处理。
  * 
  * 在Markdown转换过程中，URL中的特殊字符可能会被错误地转义，
- * 特别是&字符经常被转换为&amp;，这会导致图片无法正确显示。
+ * 特别是&字符经常被转换为&，这会导致图片无法正确显示。
  * 
  * 这个函数确保图片URL的正确性，同时保留标题和alt文本信息。
  * 
@@ -127,31 +111,14 @@ renderer.image = (href: string, title: string | null, text: string): string => {
   return `<img src="${cleanHref}" alt="${text}"${titleAttr}>`
 }
 
-/**
- * 重写代码块渲染函数
- * 为代码块添加语言标识，以便后续处理语法高亮。
- * 
- * 重要说明：由于marked的渲染器是同步的，而真正的语法高亮（如使用Shiki库）
- * 通常需要异步操作，我们不能在这里直接完成高亮处理。
- * 
- * 因此，这个函数只是生成带有必要信息的代码块结构，
- * 实际的高亮处理在convertMarkdownToHtml函数中进行。
- * 
- * 代码块包含以下信息：
- * - shiki-code类：用于识别需要高亮处理的代码块
- * - data-language属性：存储编程语言标识符
- * - 原始代码内容：未经处理的代码文本
- * 
- * @param code - 代码内容，来自Markdown中的代码块
- * @param language - 编程语言标识符（如'typescript', 'javascript'等），可能为空
- * @returns 返回带有语言标识的HTML代码块，用于后续处理
- */
-renderer.code = (code: string, language: string): string => {
-  // 不在这里转义HTML，因为marked已经处理过了HTML实体转换
-  // 使用shiki-code类标记这是一个需要高亮处理的代码块
-  // 使用data-language属性存储语言信息，便于后续处理
-  return `<pre class="shiki-code" data-language="${language || 'text'}"><code>${code}</code></pre>`
-}
+// 配置 marked 使用 markedHighlight
+marked.use(markedHighlight({
+  langPrefix: 'hljs language-',
+  highlight: (code, lang) => {
+    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+    return hljs.highlight(code, { language }).value;
+  }
+}))
 
 /**
  * 重写行内代码渲染函数
@@ -178,10 +145,9 @@ renderer.codespan = (code: string): string => {
  * 处理流程：
  * 1. 配置marked解析器的选项和自定义渲染器
  * 2. 将Markdown转换为初始HTML
- * 3. 查找并处理代码块，应用基本的高亮处理
- * 4. 返回处理后的HTML和图片信息
+ * 3. 返回处理后的HTML和图片信息
  * 
- * 注意：此函数是异步的，因为未来可能集成需要异步操作的语法高亮库。
+ * 注意：此函数是异步的，因为语法高亮需要异步操作。
  * 
  * @param markdown - 原始Markdown文本，通常从Notion页面中提取
  * @param images - 图片数组参数（当前未使用，保留用于未来扩展）
@@ -197,40 +163,7 @@ export async function convertMarkdownToHtml(markdown: string, images: NotionImag
   
   // 将Markdown转换为HTML
   // marked库会根据我们定义的渲染器规则将Markdown转换为HTML结构
-  let html = marked(markdown)
-  
-  // 处理代码高亮
-  // 由于marked的代码渲染器是同步的，而语法高亮通常需要异步操作，
-  // 我们在这里对生成的HTML进行后处理，查找代码块并应用高亮
-  try {
-    // 使用正则表达式查找所有代码块
-    // 匹配格式：<pre class="shiki-code" data-language="语言">代码内容</pre>
-    const codeBlocks = html.match(/<pre class="shiki-code" data-language="([^"]*)">([\s\S]*?)<\/pre>/g) || []
-    console.log('Found code blocks:', codeBlocks.length)
-    
-    // 逐个处理每个代码块
-    for (const block of codeBlocks) {
-      // 提取语言类型和代码内容
-      const match = block.match(/<pre class="shiki-code" data-language="([^"]*)">([\s\S]*?)<\/pre>/)
-      if (match) {
-        const [, language, codeContent] = match
-        // 解码HTML实体
-        // marked会将<、>、&等字符转换为HTML实体，我们需要将它们还原
-        const code = codeContent.replace(/<code>([\s\S]*?)<\/code>/, '$1').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
-        
-        console.log('Processing code block:', language, code.substring(0, 50))
-        
-        // 使用简单的语法高亮函数处理代码
-        // 当前只是添加基本结构，不进行实际的语法高亮
-        const highlighted = simpleHighlight(code, language)
-        // 替换原始代码块为处理后的代码块
-        html = html.replace(block, highlighted)
-      }
-    }
-  } catch (error) {
-    // 如果代码高亮处理失败，记录错误但不影响整体转换流程
-    console.error('Code highlighting error:', error)
-  }
+  const html = await marked.parse(markdown)
   
   // 返回处理结果
   return { html, images }

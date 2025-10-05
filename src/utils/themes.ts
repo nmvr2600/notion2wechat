@@ -166,6 +166,7 @@ const blue = `
   font-size: 14px;
   line-height: 1.5;
   color: #d4d4d4;
+  display: block;
 }
 
 /* 行内代码样式 */
@@ -176,17 +177,6 @@ const blue = `
   border-radius: 4px;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
-}
-
-/* Shiki 生成的代码块样式调整 */
-#nice pre.shiki {
-  margin: 16px 0 !important;
-  border-radius: 8px !important;
-  overflow-x: auto !important;
-}
-
-#nice pre.shiki code {
-  display: block !important;
 }
 `
 
@@ -400,17 +390,6 @@ const red = `
   border-radius: 4px;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
-}
-
-/* Shiki 生成的代码块样式调整 */
-#nice pre.shiki {
-  margin: 16px 0 !important;
-  border-radius: 8px !important;
-  overflow-x: auto !important;
-}
-
-#nice pre.shiki code {
-  display: block !important;
 }
 
 /* 表格内的单元格 */
@@ -750,17 +729,6 @@ const black = `
   font-size: 0.9em;
 }
 
-/* Shiki 生成的代码块样式调整 */
-#nice pre.shiki {
-  margin: 16px 0 !important;
-  border-radius: 8px !important;
-  overflow-x: auto !important;
-}
-
-#nice pre.shiki code {
-  display: block !important;
-}
-
 /* 非微信代码块
  * 代码块不换行 display: -webkit-box !important;
  * 代码块换行 display: block;
@@ -1058,17 +1026,6 @@ const yellow = `
   font-size: 0.9em;
 }
 
-/* Shiki 生成的代码块样式调整 */
-#nice pre.shiki {
-  margin: 16px 0 !important;
-  border-radius: 8px !important;
-  overflow-x: auto !important;
-}
-
-#nice pre.shiki code {
-  display: block !important;
-}
-
 /* 非微信代码块
  * 代码块不换行 display: -webkit-box !important;
  * 代码块换行 display: block;
@@ -1159,6 +1116,7 @@ const vscodeCodeStyles = `
   font-size: 14px;
   line-height: 1.5;
   color: #d4d4d4;
+  display: block;
 }
 
 /* 行内代码样式 */
@@ -1169,31 +1127,6 @@ const vscodeCodeStyles = `
   border-radius: 4px;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
-}
-
-/* Shiki 生成的代码块样式调整 */
-#nice pre.shiki {
-  margin: 16px 0 !important;
-  border-radius: 8px !important;
-  overflow-x: auto !important;
-}
-
-#nice pre.shiki code {
-  display: block !important;
-}
-
-/* 代码语言标签 */
-#nice pre.shiki .language-id {
-  position: absolute;
-  top: 0;
-  right: 12px;
-  padding: 4px 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #8c8c8c;
-  font-size: 12px;
-  border-radius: 0 0 4px 4px;
-  text-transform: uppercase;
-  font-weight: 500;
 }
 `
 

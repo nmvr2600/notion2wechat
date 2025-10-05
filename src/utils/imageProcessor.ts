@@ -47,22 +47,7 @@ async function processImage(img: HTMLImageElement): Promise<void> {
   }
 }
 
-/**
- * 修复HTML实体编码问题
- * 检查并修复src中的HTML实体编码，如&应被转换为&
- * @param src - 原始图片src属性值
- * @param img - 对应的图片元素，用于更新src属性
- * @returns 修复后的src值
- */
-function fixHtmlEntities(src: string, img: HTMLImageElement): string {
-  if (src.includes('&')) {
-    // 将HTML实体&转换为实际的&字符
-    const fixedSrc = src.replace(/&/g, '&')
-    img.setAttribute('src', fixedSrc)
-    return fixedSrc
-  }
-  return src
-}
+
 
 /**
  * 处理attachment格式的图片
