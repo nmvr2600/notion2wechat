@@ -3,9 +3,6 @@ import { defaultTheme, getAllThemes } from '@/utils/themes'
 import { processNotionImages } from '@/utils/imageProcessor'
 import { convertMarkdownToHtml, convertNotionImageUrls, testConvertNotionImageUrls } from '@/utils/markdown'
 
-function createFullHtml(content: string, theme: Theme = defaultTheme): string {
-  return `<section id="nice">${content}</section>`
-}
 
 class Notion2WeChat {
   private sidebar: HTMLElement | null = null
@@ -47,7 +44,7 @@ class Notion2WeChat {
     }
     
     this.createSidebar()
-    document.body.appendChild(this.sidebar!)
+    if (this.sidebar) document.body.appendChild(this.sidebar)
     
     // 显示侧边栏
     setTimeout(() => {
@@ -102,11 +99,11 @@ class Notion2WeChat {
     `
 
     this.button.addEventListener('mouseenter', () => {
-      this.button!.style.transform = 'translateY(-50%) scale(1.1)'
+      if (this.button) this.button.style.transform = 'translateY(-50%) scale(1.1)'
     })
 
     this.button.addEventListener('mouseleave', () => {
-      this.button!.style.transform = 'translateY(-50%) scale(1)'
+      if (this.button) this.button.style.transform = 'translateY(-50%) scale(1)'
     })
 
     document.body.appendChild(this.button)
@@ -417,20 +414,14 @@ class Notion2WeChat {
       previewContent.innerHTML = `<section id="nice">${htmlWithInlineStyles}</section>`
       
       // 添加可选择的样式
-      previewContent.style.userSelect = 'text'
-      previewContent.style.webkitUserSelect = 'text'
-      previewContent.style.mozUserSelect = 'text'
-      previewContent.style.msUserSelect = 'text'
+      const pc = previewContent as HTMLElement
+      pc.style.userSelect = 'text'
+      pc.style.setProperty('-webkit-user-select', 'text')
+      pc.style.setProperty('-moz-user-select', 'text')
+      pc.style.setProperty('-ms-user-select', 'text')
     }
   }
 
-  private getCurrentTheme(): Theme | null {
-    const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
-    if (!themeSelect) return null
-    
-    const selectedThemeName = themeSelect.value
-    return this.availableThemes.find(theme => theme.name === selectedThemeName) || null
-  }
 
   private getThemeDisplayName(themeName: string): string {
     return themeName
@@ -476,23 +467,20 @@ class Notion2WeChat {
     
     // 首先清除所有元素的内联样式
     const allElements = tempDiv.querySelectorAll('*')
-    allElements.forEach(element => {
+    for (const element of Array.from(allElements)) {
       const htmlElement = element as HTMLElement
       htmlElement.style.cssText = ''
-    })
+    }
     
-    // 解析CSS规则并应用内联样式
     const cssRules = this.parseCssRules(theme.styles)
     
-    // 应用样式到匹配的元素
-    cssRules.forEach(rule => {
+    for (const rule of cssRules) {
       const elements = tempDiv.querySelectorAll(rule.selector)
-      elements.forEach(element => {
+      for (const element of Array.from(elements)) {
         const htmlElement = element as HTMLElement
-        // 直接设置新样式，替换所有现有样式
         htmlElement.style.cssText = rule.styles
-      })
-    })
+      }
+    }
     
     return tempDiv.innerHTML
   }
@@ -502,19 +490,11 @@ class Notion2WeChat {
     
     // 简单的CSS解析器，处理基本的CSS规则
     const ruleRegex = /#nice\s+([^{]+)\s*{\s*([^}]+)\s*}/g
-    let match
-    
-    while ((match = ruleRegex.exec(cssText)) !== null) {
-      const selector = match[1].trim()
-      const styles = match[2].trim()
-      
-      // 转换选择器，例如将 "h1" 转换为 "h1", "p" 转换为 "p" 等
+    for (const m of cssText.matchAll(ruleRegex)) {
+      const selector = m[1].trim()
+      const styles = m[2].trim()
       const cleanSelector = selector.replace(/^#\w+\s+/, '')
-      
-      rules.push({
-        selector: cleanSelector,
-        styles: styles
-      })
+      rules.push({ selector: cleanSelector, styles })
     }
     
     return rules
