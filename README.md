@@ -32,9 +32,7 @@ Notion2WeChat 是一款专为内容创作者设计的 Chrome 浏览器扩展，�
 
 ## 📷 效果展示
 
-| Notion 原文 | 微信公众号效果 |
-|------------|---------------|
-| ![Notion](https://placehold.co/400x200?text=Notion+Page) | ![WeChat](https://placehold.co/400x200?text=WeChat+Article) |
+![notion](./docs/sample.png)
 
 *实际效果更佳，支持多种主题样式切换*
 
