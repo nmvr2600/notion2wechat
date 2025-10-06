@@ -3,26 +3,44 @@
   "name": "Notion2WeChat",
   "version": "1.0.0",
   "description": "Convert Notion articles to WeChat Official Account format",
-  "permissions": ["activeTab", "storage"],
-  "host_permissions": ["https://www.notion.so/*"],
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.notion.so/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["https://www.notion.so/*"],
-      "js": ["content.js"],
-      "css": ["styles.css"]
+      "matches": [
+        "https://www.notion.so/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["*.css", "*.js", "*.wasm", "assets/*", "assets/**/*"],
-      "matches": ["https://www.notion.so/*"]
+      "resources": [
+        "*.css",
+        "*.js",
+        "*.wasm",
+        "assets/*",
+        "assets/**/*"
+      ],
+      "matches": [
+        "https://www.notion.so/*"
+      ]
     }
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html",
     "default_title": "Notion2WeChat"
   },
   "icons": {
