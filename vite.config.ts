@@ -16,6 +16,7 @@ export default defineConfig({
     },
     outDir: 'dist',
     emptyOutDir: true,
+    chunkSizeWarningLimit: 1500, // 将警告限制从默认的500KB调整到1500KB
   },
   resolve: {
     alias: {

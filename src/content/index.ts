@@ -1,7 +1,7 @@
 import type { NotionPageData, Theme } from '@/types'
 import { processNotionImages } from '@/utils/imageProcessor'
 import { convertMarkdownToHtml, testConvertNotionImageUrls } from '@/utils/markdown'
-import { defaultTheme, getAllThemes } from '@/utils/themes'
+import { defaultTheme, getAllThemes, highlightJsStyles, defaultCodeStyles } from '@/utils/themes'
 import juice from 'juice/client'
 
 class Notion2WeChat {
@@ -520,23 +520,22 @@ class Notion2WeChat {
       const styledHtml = this.applyAdditionalStyles(processedHtml, theme)
 
       // 获取基础样式（highlight.js 样式和默认代码样式）
-      import('@/utils/themes').then((themes) => {
-        const baseStyles = themes.highlightJsStyles + themes.defaultCodeStyles;
-        
-        // 使用 juice 内联 CSS 样式，将基础样式和主题样式组合
-        const htmlWithStyles = `<section id="nice">${styledHtml}</section>`
-        const fullHtml = `<style>${baseStyles}${theme.styles}</style>${htmlWithStyles}`
-        const inlinedHtml = juice(fullHtml, { removeStyleTags: false })
+      // 直接使用已导入的样式，避免动态导入
+      const baseStyles = highlightJsStyles + defaultCodeStyles;
+      
+      // 使用 juice 内联 CSS 样式，将基础样式和主题样式组合
+      const htmlWithStyles = `<section id="nice">${styledHtml}</section>`
+      const fullHtml = `<style>${baseStyles}${theme.styles}</style>${htmlWithStyles}`
+      const inlinedHtml = juice(fullHtml, { removeStyleTags: false })
 
-        previewContent.innerHTML = inlinedHtml
+      previewContent.innerHTML = inlinedHtml
 
-        // 添加可选择的样式
-        const pc = previewContent as HTMLElement
-        pc.style.userSelect = 'text'
-        pc.style.setProperty('-webkit-user-select', 'text')
-        pc.style.setProperty('-moz-user-select', 'text')
-        pc.style.setProperty('-ms-user-select', 'text')
-      })
+      // 添加可选择的样式
+      const pc = previewContent as HTMLElement
+      pc.style.userSelect = 'text'
+      pc.style.setProperty('-webkit-user-select', 'text')
+      pc.style.setProperty('-moz-user-select', 'text')
+      pc.style.setProperty('-ms-user-select', 'text')
     }
   }
 

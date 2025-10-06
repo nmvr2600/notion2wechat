@@ -124,6 +124,29 @@ export const defaultCodeStyles = `
 }
 `
 
+// 默认表格样式 - 作为基础表格样式
+export const defaultTableStyles = `
+/* 表格样式 */
+#nice table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+#nice table tr th,
+#nice table tr td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  font-size: 16px;
+}
+
+#nice table tr th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+`
+
 // 各主题的特定样式（不包含 highlight.js 样式和代码块样式）
 const blue = `/* 全局属性
  * 页边距 padding: 30px;
@@ -1504,11 +1527,18 @@ const defaultStyle= `
  #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice img { max-width: 100%; height: auto; display: block; margin: 15px auto; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } 
 `
 
-// 创建主题的函数，只包含主题特定样式
+// 创建主题的函数，包含基础样式和主题特定样式
 function createTheme(name: string, themeStyles: string): Theme {
+  const allStyles = [
+    highlightJsStyles,
+    defaultCodeStyles,
+    defaultTableStyles,
+    themeStyles
+  ].join('\n')
+
   return {
     name,
-    styles: themeStyles
+    styles: allStyles
   };
 }
 
