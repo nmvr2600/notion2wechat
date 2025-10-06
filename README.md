@@ -13,6 +13,9 @@
     <a href="https://github.com/your-username/notion2wechat/releases">
       <img src="https://img.shields.io/github/v/release/your-username/notion2wechat" alt="Version">
     </a>
+    <a href="./docs/privacy.html">
+      <img src="https://img.shields.io/badge/privacy-policy-blue" alt="Privacy Policy">
+    </a>
   </p>
 </div>
 
@@ -43,6 +46,8 @@ Notion2WeChat 是一款专为内容创作者设计的 Chrome 浏览器扩展，�
 2. 搜索 "Notion2WeChat"
 3. 点击 "添加至 Chrome" 按钮完成安装
 
+> ⚠️ **注意**：扩展尚未发布到商店，可通过 [GitHub Actions](https://github.com/your-username/notion2wechat/actions) 下载最新构建版本
+
 ### 开发者模式安装
 ```bash
 # 克隆项目
@@ -63,6 +68,14 @@ pnpm run build
 2. 开启"开发者模式"
 3. 点击"加载已解压的扩展程序"
 4. 选择项目中的 `dist` 文件夹
+
+### 直接下载安装
+⚡ **快速下载**：访问 [GitHub Actions](https://github.com/your-username/notion2wechat/actions) 页面
+- 点击最新的构建任务
+- 在 "Artifacts" 部分下载 `extension-zip`
+- 解压后按照上述开发者模式安装
+
+> 📜 [查看隐私政策](./docs/privacy.html)
 
 ## 🛠️ 使用方法
 

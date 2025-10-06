@@ -1,0 +1,97 @@
+name: Build Extension
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: latest
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build extension
+      run: pnpm run build
+
+    - name: Create zip package
+      run: pnpm run build:zip
+
+    - name: Upload zip artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: extension-zip
+        path: notion2wechat-v*.zip
+        retention-days: 30
+
+    - name: Upload CRX artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: extension-crx
+        path: notion2wechat.crx
+        retention-days: 30
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: latest
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build extension
+      run: pnpm run build:zip
+
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          notion2wechat-v*.zip
+          notion2wechat.crx
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
