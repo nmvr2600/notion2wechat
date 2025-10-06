@@ -1,10 +1,103 @@
 import type { Theme } from '@/types'
 
+// highlight.js 样式
+const highlightJsStyles = `
+/* highlight.js 样式 */
+#nice pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em
+}
+#nice code.hljs {
+  padding: 3px 5px
+}
+#nice .hljs {
+  background: #F3F3F3;
+  color: #444
+}
+#nice .hljs-subst {
+  
+}
+#nice .hljs-formula,
+#nice .hljs-attr,
+#nice .hljs-property,
+#nice .hljs-params {
+  
+}
+#nice .hljs-comment {
+  color: #697070
+}
+#nice .hljs-tag,
+#nice .hljs-punctuation {
+  color: #444a
+}
+#nice .hljs-tag .hljs-name,
+#nice .hljs-tag .hljs-attr {
+  color: #444
+}
+#nice .hljs-keyword,
+#nice .hljs-attribute,
+#nice .hljs-selector-tag,
+#nice .hljs-meta .hljs-keyword,
+#nice .hljs-doctag,
+#nice .hljs-name {
+  font-weight: bold
+}
+#nice .hljs-type,
+#nice .hljs-string,
+#nice .hljs-number,
+#nice .hljs-selector-id,
+#nice .hljs-selector-class,
+#nice .hljs-quote,
+#nice .hljs-template-tag,
+#nice .hljs-deletion {
+  color: #880000
+}
+#nice .hljs-title,
+#nice .hljs-section {
+  color: #880000;
+  font-weight: bold
+}
+#nice .hljs-regexp,
+#nice .hljs-symbol,
+#nice .hljs-variable,
+#nice .hljs-template-variable,
+#nice .hljs-link,
+#nice .hljs-selector-attr,
+#nice .hljs-operator,
+#nice .hljs-selector-pseudo {
+  color: #ab5656
+}
+#nice .hljs-literal {
+  color: #695
+}
+#nice .hljs-built_in,
+#nice .hljs-bullet,
+#nice .hljs-code,
+#nice .hljs-addition {
+  color: #397300
+}
+#nice .hljs-meta {
+  color: #1f7199
+}
+#nice .hljs-meta .hljs-string {
+  color: #38a
+}
+#nice .hljs-emphasis {
+  font-style: italic
+}
+#nice .hljs-strong {
+  font-weight: bold
+}
+`
+
 const blue = `
 /* 全局属性 */
 #nice {
   counter-reset: counterh1 counterh2 counterh3;
 }
+
+${highlightJsStyles}
 
 /* 段落 */
 #nice p {
@@ -193,6 +286,8 @@ const red = `
     letter-spacing: 0.8px;
     border-radius: 16px;
 }
+
+${highlightJsStyles}
 
 /* 段落 */
 #nice p {
@@ -482,6 +577,8 @@ const black = `
   font-size:14px;
   padding:10px;
 }
+
+${highlightJsStyles}
 
 /*图片下提示*/
 #nice figcaption{
@@ -834,7 +931,12 @@ const yellow = `
 #nice {
 }
 
+${highlightJsStyles}
+
 #nice p {
+	font-size: 16px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 	margin: 0 0 20px;
 	padding: 0;
 	line-height: 1.8em;
@@ -1133,7 +1235,7 @@ const vscodeCodeStyles = `
 // 默认主题
 export const defaultTheme: Theme = {
   name: '默认',
-  styles: ` #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice img { max-width: 100%; height: auto; display: block; margin: 15px auto; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } ${vscodeCodeStyles} #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } `,
+  styles: ` #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice img { max-width: 100%; height: auto; display: block; margin: 15px auto; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } ${vscodeCodeStyles} #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } ${highlightJsStyles}`,
 }
 
 // 蓝色主题

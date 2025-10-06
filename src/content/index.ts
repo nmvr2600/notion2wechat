@@ -516,12 +516,12 @@ class Notion2WeChat {
       const selectedThemeName = themeSelect?.value || 'default'
       const theme = this.availableThemes.find((t) => t.name === selectedThemeName) || defaultTheme
 
-      // 添加 highlight.js 的 CDN CSS 样式用于预览
-      const highlightJsStyles = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">`
+      // 为段落元素添加字体大小和内边距样式
+      const styledHtml = this.applyAdditionalStyles(processedHtml, theme)
 
       // 使用 juice 内联 CSS 样式
-      const htmlWithStyles = `<section id="nice">${processedHtml}</section>`
-      const fullHtml = `${highlightJsStyles}<style>${theme.styles}</style>${htmlWithStyles}`
+      const htmlWithStyles = `<section id="nice">${styledHtml}</section>`
+      const fullHtml = `<style>${theme.styles}</style>${htmlWithStyles}`
       const inlinedHtml = juice(fullHtml, { removeStyleTags: false })
 
       previewContent.innerHTML = inlinedHtml
@@ -533,6 +533,35 @@ class Notion2WeChat {
       pc.style.setProperty('-moz-user-select', 'text')
       pc.style.setProperty('-ms-user-select', 'text')
     }
+  }
+
+  /**
+   * 为HTML元素应用额外的样式属性
+   * 确保所有CSS样式都被正确应用到元素上
+   */
+  private applyAdditionalStyles(html: string, theme: Theme): string {
+    // 创建临时DOM元素来处理HTML
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = html
+
+    // 如果使用的是yellow主题，为段落元素添加额外样式
+    if (theme.name === '黄色') {
+      const paragraphs = tempDiv.querySelectorAll('p')
+      paragraphs.forEach(p => {
+        // 确保段落元素有字体大小、上内边距和下内边距样式
+        if (!p.style.fontSize || p.style.fontSize === '') {
+          p.style.fontSize = '16px'
+        }
+        if (!p.style.paddingTop || p.style.paddingTop === '') {
+          p.style.paddingTop = '8px'
+        }
+        if (!p.style.paddingBottom || p.style.paddingBottom === '') {
+          p.style.paddingBottom = '8px'
+        }
+      })
+    }
+
+    return tempDiv.innerHTML
   }
 
   private getThemeDisplayName(themeName: string): string {
@@ -565,19 +594,40 @@ class Notion2WeChat {
 
     try {
       // 获取预览区域的HTML内容
-      const previewHtml = preview.innerHTML
+      let previewHtml = preview.innerHTML
 
       // 获取当前主题
       const themeSelect = document.querySelector('#theme-select') as HTMLSelectElement
       const selectedThemeName = themeSelect?.value || 'default'
       const theme = this.availableThemes.find((t) => t.name === selectedThemeName) || defaultTheme
 
-      // 添加 highlight.js 的 CDN CSS 样式用于导出
-      const highlightJsStyles = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">`
+      // 如果使用的是yellow主题，为段落元素添加额外样式
+      if (theme.name === '黄色') {
+        // 创建临时DOM元素来处理HTML
+        const tempDiv = document.createElement('div')
+        tempDiv.innerHTML = previewHtml
+
+        // 为段落元素添加额外样式
+        const paragraphs = tempDiv.querySelectorAll('p')
+        paragraphs.forEach(p => {
+          // 确保段落元素有字体大小、上内边距和下内边距样式
+          if (!p.style.fontSize || p.style.fontSize === '') {
+            p.style.fontSize = '16px'
+          }
+          if (!p.style.paddingTop || p.style.paddingTop === '') {
+            p.style.paddingTop = '8px'
+          }
+          if (!p.style.paddingBottom || p.style.paddingBottom === '') {
+            p.style.paddingBottom = '8px'
+          }
+        })
+
+        previewHtml = tempDiv.innerHTML
+      }
 
       // 使用 juice 内联 CSS 样式
       const htmlWithStyles = `<section id="nice">${previewHtml}</section>`
-      const fullHtml = `${highlightJsStyles}<style>${theme.styles}</style>${htmlWithStyles}`
+      const fullHtml = `<style>${theme.styles}</style>${htmlWithStyles}`
       const inlinedHtml = juice(fullHtml, { removeStyleTags: true })
 
       // 使用Clipboard API直接写入富文本HTML
