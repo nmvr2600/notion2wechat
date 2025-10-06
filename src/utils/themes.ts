@@ -91,187 +91,231 @@ const highlightJsStyles = `
 }
 `
 
-const blue = `
-/* 全局属性 */
+const blue = `/* 全局属性
+ * 页边距 padding: 30px;
+ * 全文字体 font-family: ptima-Regular;
+ * 英文换行 word-break: break-all;
+ */
 #nice {
-  counter-reset: counterh1 counterh2 counterh3;
 }
 
-${highlightJsStyles}
-
-/* 段落 */
+/* 段落，下方未标注标签参数均同此处
+ * 上边距 margin-top: 5px;
+ * 下边距 margin-bottom: 5px;
+ * 行高 line-height: 26px;
+ * 词间距 word-spacing: 3px;
+ * 字间距 letter-spacing: 3px;
+ * 对齐 text-align: left;
+ * 颜色 color: #3e3e3e;
+ * 字体大小 font-size: 16px;
+ * 首行缩进 text-indent: 2em;
+ */
 #nice p {
+  line-height: 1.6;
+  color: #3f3f3f;
+  font-size: 16px;
+  margin: 10px 0px;
 }
 
 /* 一级标题 */
 #nice h1 {
-  line-height: 28px;
-  border-bottom: 1px solid rgb(37,132,181);
-}
-
-#nice h1:before {
-  background: rgb(37,132,181);
-  color: white;
-  counter-increment: counterh1;
-  content: 'Part'counter(counterh1); 
-  padding: 2px 8px;
 }
 
 /* 一级标题内容 */
 #nice h1 .content {
-  color: rgb(37,132,181);
-  margin-left: 8px;
-  font-size: 20px;
+}
+
+/* 一级标题修饰 请参考有实例的主题 */
+#nice h1:after {
+}
+
+/* 二级标题 */
+#nice h2 {
+  margin: 80px 10px 40px 10px;
+  text-align: center;
+  font-weight: normal;
+  color: #3f3f3f;
+  font-size: 140%;
 }
 
 /* 二级标题内容 */
 #nice h2 .content {
-  font-size: 18px;
-  border-bottom: 4px solid rgb(37,132,181);
-  padding: 2px 4px;
-  color: rgb(37,132,181);
 }
 
-/* 二级标题前缀 */
-#nice h2 .prefix {
-  display: inline-block;
+/* 二级标题修饰 请参考有实例的主题 */
+#nice h2:after {
 }
 
-#nice h2 .prefix:before {
-  counter-increment: counterh2;
-  content: counter(counterh2); 
-  color:rgb(159,205,208);
-  border-bottom: 4px solid rgb(159,205,208);
-  font-size: 18px;
-  padding: 2px 4px;
+/* 三级标题 */
+#nice h3 {
+  margin: 40px 0px 20px 0px;
+  font-weight: bold;
+  line-height: 1.5;
+  color: #3f3f3f;
+  font-size: 120%;
 }
 
 /* 三级标题内容 */
 #nice h3 .content {
-  font-size: 16px;
-  border-bottom: 1px solid rgb(37,132,181);
-  padding: 2px 10px;
-  color: rgb(37,132,181);
 }
 
-/* 三级标题前缀 */
-#nice h3 .prefix {
-  display:inline-block;
-  background:linear-gradient(45deg, transparent 48%, rgb(37,132,181) 48%, 
-            rgb(37,132,181) 52%, transparent 52%);
-  width:24px;
-  height:24px;
-  margin-bottom: -7px;
+/* 三级标题修饰 请参考有实例的主题 */
+#nice h3:after {
 }
 
-/* 一级引用 */
+/* 无序列表整体样式
+ * list-style-type: square|circle|disc;
+ */
+#nice ul {
+list-style-type: disc;
+}
+
+/* 有序列表整体样式
+ * list-style-type: upper-roman|lower-greek|lower-alpha;
+ */
+#nice ol {
+list-style-type: decimal;
+}
+
+/* 列表内容，不要设置li
+ */
+#nice li section {
+}
+
+/* 引用
+* 左边缘颜色 border-left-color: black;
+* 背景色 background: gray;
+*/
 #nice .multiquote-1 {
-  border: 1px dashed rgb(37,132,181);
-  background: transparent;
+  color: rgb(91,91,91);
+  border-left: 3px solid rgb(158,158,158);
+  background: rgba(158, 158, 158, 0.1);
+  padding: 1px 0 1px 10px;
+  margin: 20px 0px;
 }
 
-/* 二级引用 */
-#nice .multiquote-2 {
-  border: 1px dashed rgb(248,99,77);
-  box-shadow: none;
+/* 引用文字 */
+#nice .multiquote-1 p {
+  color: #3f3f3f;
+  line-height: 1.5;
+  font-size: 16px;
+  margin: 10px;
+  padding: 0px;
 }
 
-#nice .multiquote-2 blockquote {
-  margin: 0;
-}
-
-#nice .multiquote-2 strong {
-  color:rgb(248,99,77);
-}
-
-#nice .multiquote-2 a {
-  color:rgb(248,99,77);
-  border-bottom: 1px solid rgb(248,99,77);
-}
-
-/* 链接 */
+/* 链接 
+ * border-bottom: 1px solid #009688;
+ */
 #nice a {
-  color:rgb(37,132,181);
-  border-bottom: 1px solid rgb(37,132,181);
+  color: #ff3502;
+  border-bottom: 1px solid #ff3502;
 }
 
 /* 加粗 */
 #nice strong {
-  color: rgb(37,132,181);
+  color: #ff3502;
+  line-height: 1.5;
+  font-size: 16px;
 }
 
 /* 斜体 */
 #nice em {
-  color: rgb(37,132,181);
 }
 
 /* 加粗斜体 */
 #nice em strong {
-  color: rgb(37,132,181);
 }
 
-/* 分隔线 */
+/* 删除线 */
+#nice del {
+}
+
+/* 分隔线
+* 粗细、样式和颜色
+* border-top: 1px solid #3e3e3e;
+*/
 #nice hr {
-  border-top: 1px solid rgb(37,132,181);
 }
 
-/* 表格 */
-#nice table tr th {
-  border: 1px solid rgb(248,99,77);
-  background-color: rgb(235,114,80);
-  color: #f8f8f8;
-  border-bottom: 0;
-  border: 1px solid rgb(245,203,174);
+/* 图片
+* 宽度 width: 80%;
+* 居中 margin: 0 auto;
+* 居左 margin: 0 0;
+*/
+#nice img {
 }
 
+/* 图片描述文字 */
+#nice figcaption {
+}
+
+/* 行内代码 */
+#nice p code, #nice li code {
+  background: #f8f5ec;
+  color: #ff3502;
+  line-height: 1.5;
+  font-size: 90%;
+  padding: 3px 5px;
+  border-radius: 2px;
+}
+
+/* 非微信代码块
+ * 代码块不换行 display: -webkit-box !important;
+ * 代码块换行 display: block;
+ */
+#nice pre code {
+}
+
+/*
+ * 表格内的单元格
+ * 字体大小 font-size: 16px;
+ * 边框 border: 1px solid #ccc;
+ * 内边距 padding: 5px 10px;
+ */
+#nice table tr th,
 #nice table tr td {
-  border: 1px solid rgb(245,203,174);
-}
-
-#nice table tr:nth-of-type(2) {
-  background-color: rgb(248,222,203);
 }
 
 /* 脚注文字 */
 #nice .footnote-word {
-  color:rgb(37,132,181);
+  color: #ff3502;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: normal;
 }
 
 /* 脚注上标 */
 #nice .footnote-ref {
-  color:rgb(37,132,181);
+  color: #ff3502;
+  font-weight: normal;
 }
 
-/* 代码块样式 */
-#nice pre {
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  padding: 16px;
-  overflow-x: auto;
-  margin: 16px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* "参考资料"四个字 */
+#nice .footnotes-sep {
 }
 
-#nice pre code {
-  background-color: transparent;
-  padding: 0;
-  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #d4d4d4;
-  display: block;
+/* 参考资料编号 */
+#nice .footnote-num {
 }
 
-/* 行内代码样式 */
-#nice .inline-code {
-  background-color: rgba(37, 132, 181, 0.1);
-  color: #2584b5;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.9em;
+/* 参考资料文字 */
+#nice .footnote-item p { 
 }
-`
+
+/* 参考资料解释 */
+#nice .footnote-item p em {
+}
+
+/* 行间公式
+ * 最大宽度 max-width: 300% !important;
+ */
+#nice .block-equation svg {
+}
+
+/* 行内公式
+ */
+#nice .inline-equation svg {  
+}`
 
 const red = `
 /*自定义样式，实时生效*/
@@ -725,13 +769,14 @@ ${highlightJsStyles}
 /* 无序二级列表
  */
 #nice ul li ul li{
-  list-style-type: circle;
+  list-style-type: disc;
 }
 
 /* 有序列表整体样式
  * list-style-type: upper-roman|lower-greek|lower-alpha;
  */
 #nice ol {
+  list-style-type: decimal;
 }
 
 /* 列表内容，不要设置li
@@ -1036,12 +1081,14 @@ ${highlightJsStyles}
  * list-style-type: square|circle|disc;
  */
 #nice ul {
+list-style-type: disc;
 }
 
 /* 有序列表整体样式
  * list-style-type: upper-roman|lower-greek|lower-alpha;
  */
 #nice ol {
+list-style-type: decimal;
 }
 
 /* 列表内容，不要设置li
@@ -1231,6 +1278,195 @@ const vscodeCodeStyles = `
   font-size: 0.9em;
 }
 `
+const orange = `
+/* 全局属性
+ * 页边距 padding: 30px;
+ * 全文字体 font-family: ptima-Regular;
+ * 英文换行 word-break: break-all;
+ */
+#nice {
+  font-size: 16px; 
+  color: black; 
+  padding: 0 10px; 
+  line-height: 1.6; 
+  word-spacing: 0px; 
+  letter-spacing: 0px; 
+  word-break: break-word; 
+  word-wrap: break-word; 
+  text-align: left; 
+  font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+/* 段落，下方未标注标签参数均同此处
+ * 上边距 margin-top: 5px;
+ * 下边距 margin-bottom: 5px;
+ * 行高 line-height: 26px;
+ * 词间距 word-spacing: 3px;
+ * 字间距 letter-spacing: 3px;
+ * 对齐 text-align: left;
+ * 颜色 color: #3e3e3e;
+ * 字体大小 font-size: 16px;
+ * 首行缩进 text-indent: 2em;
+ */
+#nice p {
+font-size: 16px; padding-top: 8px; padding-bottom: 8px; margin: 0; line-height: 26px; color: black;
+}
+/* 一级标题 */
+#nice h1 {
+}
+/* 一级标题内容 */
+#nice h1 .content {
+}
+/* 一级标题修饰 请参考有实例的主题 */
+#nice h1:after {
+}
+/* 二级标题 */
+#nice h2 {
+  border-bottom: 2px solid rgb(239, 112, 96);
+  font-size: 1.3em;
+}
+/* 二级标题内容 */
+#nice h2 .content {
+  display: inline-block;
+  font-weight: bold;
+  background: rgb(239, 112, 96);
+  color: #ffffff;
+  padding: 3px 10px 1px;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+  margin-right: 3px;
+}
+/* 二级标题修饰 请参考有实例的主题 */
+#nice h2:after {
+  display: inline-block;
+  content: " ";
+  vertical-align: bottom;
+  border-bottom: 36px solid #efebe9;
+  border-right: 20px solid transparent;
+}
+/* 三级标题 */
+#nice h3 {
+}
+/* 三级标题内容 */
+#nice h3 .content {
+}
+/* 三级标题修饰 请参考有实例的主题 */
+#nice h3:after {
+}
+/* 无序列表整体样式
+ * list-style-type: square|circle|disc;
+ */
+#nice ul {
+list-style-type: disc;
+}
+/* 有序列表整体样式
+ * list-style-type: upper-roman|lower-greek|lower-alpha;
+ */
+#nice ol {
+list-style-type: decimal;
+}
+/* 列表内容，不要设置li
+ */
+#nice li section {
+}
+/* 引用
+ * 左边缘颜色 border-left-color: black;
+ * 背景色 background: gray;
+ */
+#nice .multiquote-1 {
+  border-left-color: rgb(239, 112, 96);
+  background: #fff9f9;
+}
+/* 引用文字 */
+#nice .multiquote-1 p {
+}
+/* 链接 
+ * border-bottom: 1px solid #009688;
+ */
+#nice a {
+  color: rgb(239, 112, 96);
+  border-bottom: 1px solid rgb(239, 112, 96);
+}
+/* 加粗 */
+#nice strong {
+}
+/* 斜体 */
+#nice em {
+}
+/* 加粗斜体 */
+#nice em strong {
+}
+/* 删除线 */
+#nice del {
+}
+/* 分隔线
+ * 粗细、样式和颜色
+ * border-top: 1px solid #3e3e3e;
+ */
+#nice hr {
+}
+/* 图片
+ * 宽度 width: 80%;
+ * 居中 margin: 0 auto;
+ * 居左 margin: 0 0;
+ */
+#nice img {
+}
+/* 图片描述文字 */
+#nice figcaption {
+}
+/* 行内代码 */
+#nice p code, #nice li code {
+  color: rgb(239, 112, 96);
+}
+/* 非微信代码块
+ * 代码块不换行 display: -webkit-box !important;
+ * 代码块换行 display: block;
+ */
+#nice pre code {
+}
+/*
+ * 表格内的单元格
+ * 字体大小 font-size: 16px;
+ * 边框 border: 1px solid #ccc;
+ * 内边距 padding: 5px 10px;
+ */
+#nice table tr th,
+#nice table tr td {
+}
+/* 脚注文字 */
+#nice .footnote-word {
+  color: #ff3502;
+}
+/* 脚注上标 */
+#nice .footnote-ref {
+  color: rgb(239, 112, 96);
+}
+/* "参考资料"四个字 
+ * 内容 content: "参考资料";
+ */
+#nice .footnotes-sep:before {
+}
+/* 参考资料编号 */
+#nice .footnote-num {
+}
+/* 参考资料文字 */
+#nice .footnote-item p { 
+}
+/* 参考资料解释 */
+#nice .footnote-item p em {
+}
+/* 行间公式
+ * 最大宽度 max-width: 300% !important;
+ */
+#nice .block-equation svg {
+}
+/* 行内公式
+ */
+#nice .inline-equation svg {  
+}
+`
+
+
 
 // 默认主题
 export const defaultTheme: Theme = {
@@ -1260,7 +1496,12 @@ export const yellowTheme: Theme = {
   styles: yellow,
 }
 
+export const orangeTheme: Theme = {
+  name: '橙色',
+  styles: orange,
+}
+
 // 获取所有主题
 export function getAllThemes(): Theme[] {
-  return [defaultTheme, blueTheme, redTheme, blackTheme, yellowTheme]
+  return [defaultTheme, blueTheme, redTheme, blackTheme, yellowTheme, orangeTheme]
 }
