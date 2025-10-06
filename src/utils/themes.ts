@@ -1516,19 +1516,19 @@ function createTheme(name: string, themeStyles: string): Theme {
 export const defaultTheme: Theme = createTheme('默认', defaultStyle)
 
 // 蓝色主题
-export const blueTheme: Theme = createTheme('蓝色', blue)
+export const blueTheme: Theme = createTheme('微信', blue)
 
 // 红色主题
-export const redTheme: Theme = createTheme('红色', red)
+export const redTheme: Theme = createTheme('红绯', red)
 
 // 黑色主题
-export const blackTheme: Theme = createTheme('黑色', black)
+export const blackTheme: Theme = createTheme('简黑', black)
 
 // 黄色主题
-export const yellowTheme: Theme = createTheme('黄色', yellow)
+export const yellowTheme: Theme = createTheme('山吹', yellow)
 
 // 橙色主题
-export const orangeTheme: Theme = createTheme('橙色', orange)
+export const orangeTheme: Theme = createTheme('橙心', orange)
 
 // 获取所有主题
 export function getAllThemes(): Theme[] {
