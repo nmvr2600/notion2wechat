@@ -598,55 +598,17 @@ class Notion2WeChat {
     }
 
     try {
-      // 获取预览区域的HTML内容
-      let previewHtml = preview.innerHTML
-
-      // 获取当前主题
-      const themeSelect = document.querySelector('#theme-select') as HTMLSelectElement
-      const selectedThemeName = themeSelect?.value || 'default'
-      const theme = this.availableThemes.find((t) => t.name === selectedThemeName) || defaultTheme
-
-      // 如果使用的是yellow主题，为段落元素添加额外样式
-      if (theme.name === '黄色') {
-        // 创建临时DOM元素来处理HTML
-        const tempDiv = document.createElement('div')
-        tempDiv.innerHTML = previewHtml
-
-        // 为段落元素添加额外样式
-        const paragraphs = tempDiv.querySelectorAll('p')
-        paragraphs.forEach(p => {
-          // 确保段落元素有字体大小、上内边距和下内边距样式
-          if (!p.style.fontSize || p.style.fontSize === '') {
-            p.style.fontSize = '16px'
-          }
-          if (!p.style.paddingTop || p.style.paddingTop === '') {
-            p.style.paddingTop = '8px'
-          }
-          if (!p.style.paddingBottom || p.style.paddingBottom === '') {
-            p.style.paddingBottom = '8px'
-          }
-        })
-
-        previewHtml = tempDiv.innerHTML
-      }
-
-      // 获取基础样式（highlight.js 样式和默认代码样式）
-      const themes = await import('@/utils/themes');
-      const baseStyles = themes.highlightJsStyles + themes.defaultCodeStyles;
-
-      // 使用 juice 内联 CSS 样式，将基础样式和主题样式组合
-      const htmlWithStyles = `<section id="nice">${previewHtml}</section>`
-      const fullHtml = `<style>${baseStyles}${theme.styles}</style>${htmlWithStyles}`
-      const inlinedHtml = juice(fullHtml, { removeStyleTags: true })
+      // 直接获取预览区域的HTML内容，已经包含了所有样式和处理过的图片
+      const previewHtml = preview.innerHTML
 
       // 使用Clipboard API直接写入富文本HTML
-      console.log('写入剪贴板的HTML内容:', inlinedHtml)
-      console.log('HTML内容长度:', inlinedHtml.length)
+      console.log('写入剪贴板的HTML内容:', previewHtml)
+      console.log('HTML内容长度:', previewHtml.length)
 
       await navigator.clipboard.write([
         new ClipboardItem({
-          'text/html': new Blob([inlinedHtml], { type: 'text/html' }),
-          'text/plain': new Blob([inlinedHtml], { type: 'text/plain' }),
+          'text/html': new Blob([previewHtml], { type: 'text/html' }),
+          'text/plain': new Blob([previewHtml], { type: 'text/plain' }),
         }),
       ])
 
