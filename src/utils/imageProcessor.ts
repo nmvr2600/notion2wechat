@@ -47,8 +47,6 @@ async function processImage(img: HTMLImageElement): Promise<void> {
   }
 }
 
-
-
 /**
  * 处理attachment格式的图片
  * 根据attachment格式的src查找匹配的图片元素，并将其转换为base64格式

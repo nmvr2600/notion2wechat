@@ -1,9 +1,6 @@
 import type { NotionPageData, Theme } from '@/types'
 import { processNotionImages } from '@/utils/imageProcessor'
-import {
-  convertMarkdownToHtml,
-  testConvertNotionImageUrls,
-} from '@/utils/markdown'
+import { convertMarkdownToHtml, testConvertNotionImageUrls } from '@/utils/markdown'
 import { defaultTheme, getAllThemes } from '@/utils/themes'
 import juice from 'juice/client'
 
@@ -11,10 +8,49 @@ class Notion2WeChat {
   private sidebar: HTMLElement | null = null
   private button: HTMLElement | null = null
   private availableThemes: Theme[] = [defaultTheme]
-  private currentHtmlContent: string = '' // 保存当前的原始HTML内容
+  private currentHtmlContent = '' // 保存当前的原始HTML内容
 
   constructor() {
     this.init()
+  }
+
+  private ensureToastResources() {
+    let style = document.getElementById('n2w-toast-style') as HTMLStyleElement | null
+    if (!style) {
+      style = document.createElement('style')
+      style.id = 'n2w-toast-style'
+      style.textContent =
+        '.n2w-toast-container{position:fixed;top:16px;right:16px;z-index:10002;display:flex;flex-direction:column;gap:8px}.n2w-toast{opacity:0;transform:translateY(-6px);transition:all .2s ease;padding:8px 12px;border-radius:6px;color:#fff;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.15);background:#374151}.n2w-toast.show{opacity:1;transform:translateY(0)}.n2w-toast.success{background:#16a34a}.n2w-toast.error{background:#dc2626}.n2w-toast.info{background:#2563eb}'
+      document.head.appendChild(style)
+    }
+    let container = document.querySelector('.n2w-toast-container') as HTMLElement | null
+    if (!container) {
+      container = document.createElement('div')
+      container.className = 'n2w-toast-container'
+      document.body.appendChild(container)
+    }
+    return container
+  }
+
+  private showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    const container = this.ensureToastResources()
+    const el = document.createElement('div')
+    el.className = `n2w-toast ${type}`
+    el.textContent = message
+    container.appendChild(el)
+    requestAnimationFrame(() => {
+      el.classList.add('show')
+    })
+    setTimeout(() => {
+      el.classList.remove('show')
+      el.addEventListener(
+        'transitionend',
+        () => {
+          el.remove()
+        },
+        { once: true }
+      )
+    }, 2200)
   }
 
   private init() {
@@ -303,7 +339,8 @@ class Notion2WeChat {
     const handleMouseDown = (e: MouseEvent) => {
       isResizing = true
       startX = e.clientX
-      startWidth = this.sidebar!.offsetWidth
+      const sidebarEl = this.sidebar
+      if (sidebarEl) startWidth = sidebarEl.offsetWidth
       document.body.style.cursor = 'col-resize'
       document.body.style.userSelect = 'none'
       e.preventDefault()
@@ -314,7 +351,7 @@ class Notion2WeChat {
 
       const deltaX = startX - e.clientX
       const newWidth = Math.max(300, Math.min(800, startWidth + deltaX))
-      this.sidebar!.style.width = `${newWidth}px`
+      if (this.sidebar) this.sidebar.style.width = `${newWidth}px`
     }
 
     const handleMouseUp = () => {
@@ -343,7 +380,7 @@ class Notion2WeChat {
   private async generateContent() {
     const notionData = await this.extractNotionContent()
     if (!notionData) {
-      alert('无法获取Notion页面内容')
+      this.showToast('无法获取Notion页面内容', 'error')
       return
     }
 
@@ -370,7 +407,7 @@ class Notion2WeChat {
       }
     } catch (error) {
       console.error('Content generation failed:', error)
-      alert('内容生成失败，请重试')
+      this.showToast('内容生成失败，请重试', 'error')
     } finally {
       // 恢复按钮状态
       if (generateBtn) {
@@ -480,7 +517,7 @@ class Notion2WeChat {
       const theme = this.availableThemes.find((t) => t.name === selectedThemeName) || defaultTheme
 
       // 添加 highlight.js 的 CDN CSS 样式用于预览
-      const highlightJsStyles = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">`;
+      const highlightJsStyles = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">`
 
       // 使用 juice 内联 CSS 样式
       const htmlWithStyles = `<section id="nice">${processedHtml}</section>`
@@ -515,8 +552,6 @@ class Notion2WeChat {
     }
   }
 
-  
-
   private async copyContent() {
     const preview = document.getElementById('preview-content')
     if (!preview) return
@@ -538,7 +573,7 @@ class Notion2WeChat {
       const theme = this.availableThemes.find((t) => t.name === selectedThemeName) || defaultTheme
 
       // 添加 highlight.js 的 CDN CSS 样式用于导出
-      const highlightJsStyles = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">`;
+      const highlightJsStyles = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">`
 
       // 使用 juice 内联 CSS 样式
       const htmlWithStyles = `<section id="nice">${previewHtml}</section>`
@@ -552,13 +587,14 @@ class Notion2WeChat {
       await navigator.clipboard.write([
         new ClipboardItem({
           'text/html': new Blob([inlinedHtml], { type: 'text/html' }),
+          'text/plain': new Blob([inlinedHtml], { type: 'text/plain' }),
         }),
       ])
 
-      alert('已复制到剪贴板，可以直接粘贴到公众号编辑器')
+      this.showToast('已复制到剪贴板', 'success')
     } catch (error) {
       console.error('复制失败:', error)
-      alert('复制失败，请重试')
+      this.showToast('复制失败，请重试', 'error')
     } finally {
       // 恢复按钮状态
       if (copyBtn) {

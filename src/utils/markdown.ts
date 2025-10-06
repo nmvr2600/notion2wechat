@@ -1,10 +1,10 @@
 import type { ConversionResult, NotionImage } from '@/types'
+import hljs from 'highlight.js'
 import { marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
-import hljs from 'highlight.js'
 
 // 自定义渲染器，确保HTML结构与CSS选择器匹配
-// 
+//
 // marked库允许我们自定义各种Markdown元素的渲染方式。
 // 通过重写渲染器方法，我们可以控制生成的HTML结构，
 // 确保它与主题样式表中的CSS选择器匹配，从而正确应用样式。
@@ -13,14 +13,14 @@ const renderer = new marked.Renderer()
 /**
  * 重写标题渲染函数
  * 为标题添加前缀、内容和后缀的span结构，以便应用主题样式。
- * 
+ *
  * 不同的主题需要对标题的不同部分应用样式，例如：
  * - 前缀：可能显示编号或装饰性元素
  * - 内容：标题文本本身
  * - 后缀：可能显示装饰性元素
- * 
+ *
  * 通过将标题分解为这三个部分，主题样式可以更灵活地控制标题的外观。
- * 
+ *
  * @param text - 标题文本内容，来自Markdown中的标题标记
  * @param level - 标题级别（1-6），对应H1到H6标签
  * @returns 返回格式化的HTML标题字符串，包含前缀、内容和后缀的span元素
@@ -28,7 +28,7 @@ const renderer = new marked.Renderer()
 renderer.heading = (text: string, level: number): string => {
   // 对不同级别的标题应用不同的结构
   // 目前主要处理H1、H2和H3，其他级别保持简单结构
-  
+
   if (level === 1)
     return `
       <h${level}>
@@ -60,13 +60,13 @@ renderer.heading = (text: string, level: number): string => {
 /**
  * 重写列表项渲染函数
  * 为列表项添加section包装，以便应用主题样式。
- * 
+ *
  * 通过将列表项内容包装在section元素中，主题样式可以更精确地
  * 控制列表项的外观，包括文本样式、间距、装饰等。
- * 
+ *
  * 这种结构也使得列表项可以包含更复杂的内容，如段落、代码块等，
  * 同时保持样式的一致性。
- * 
+ *
  * @param text - 列表项的内容，可能包含文本、链接、代码等Markdown元素
  * @returns 返回格式化的HTML列表项，包含li标签和section包装
  */
@@ -75,14 +75,14 @@ renderer.listitem = (text: string): string => `<li><section>${text}</section></l
 /**
  * 重写引用渲染函数
  * 为引用添加multiquote-1类，以便应用主题样式。
- * 
+ *
  * 在微信公众号编辑器中，引用块通常有特殊的样式要求，
  * 包括边框、背景色、字体样式等。通过添加特定的CSS类，
  * 主题样式可以正确地应用这些样式。
- * 
+ *
  * multiquote-1类名支持多级引用的样式控制，
  * 例如引用中的引用可以使用multiquote-2类。
- * 
+ *
  * @param text - 引用的内容，可能包含段落、列表等其他Markdown元素
  * @returns 返回格式化的HTML引用，使用blockquote标签和特定CSS类
  */
@@ -92,12 +92,12 @@ renderer.blockquote = (text: string): string =>
 /**
  * 重写图片渲染函数
  * 确保图片URL中的&字符被正确处理。
- * 
+ *
  * 在Markdown转换过程中，URL中的特殊字符可能会被错误地转义，
  * 特别是&字符经常被转换为&，这会导致图片无法正确显示。
- * 
+ *
  * 这个函数确保图片URL的正确性，同时保留标题和alt文本信息。
- * 
+ *
  * @param href - 图片的原始URL，可能包含转义字符
  * @param title - 图片的标题属性（可选），用于鼠标悬停时显示
  * @param text - 图片的alt文本，用于图片无法加载时显示和SEO
@@ -112,25 +112,27 @@ renderer.image = (href: string, title: string | null, text: string): string => {
 }
 
 // 配置 marked 使用 markedHighlight
-marked.use(markedHighlight({
-  langPrefix: 'hljs language-',
-  highlight: (code, lang) => {
-    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-    return hljs.highlight(code, { language }).value;
-  }
-}))
+marked.use(
+  markedHighlight({
+    langPrefix: 'hljs language-',
+    highlight: (code, lang) => {
+      const language = hljs.getLanguage(lang) ? lang : 'plaintext'
+      return hljs.highlight(code, { language }).value
+    },
+  })
+)
 
 /**
  * 重写行内代码渲染函数
  * 为行内代码添加inline-code类，以便应用主题样式。
- * 
+ *
  * 行内代码与代码块不同，它出现在段落文本中，需要与周围内容
  * 保持良好的视觉协调。通过添加特定的CSS类，主题样式可以
  * 控制行内代码的字体、背景色、边框等样式。
- * 
+ *
  * 在微信公众号编辑器中，行内代码通常需要与正文有所区别，
  * 但又不能过于突兀，因此需要精细的样式控制。
- * 
+ *
  * @param code - 行内代码内容，通常是简短的代码片段或变量名
  * @returns 返回格式化的HTML行内代码，使用code标签和特定CSS类
  */
@@ -141,30 +143,33 @@ renderer.codespan = (code: string): string => {
 /**
  * 将Markdown转换为HTML的主函数
  * 这是整个Markdown处理流程的核心函数，负责将原始Markdown文本转换为可在微信编辑器中使用的HTML格式。
- * 
+ *
  * 处理流程：
  * 1. 配置marked解析器的选项和自定义渲染器
  * 2. 将Markdown转换为初始HTML
  * 3. 返回处理后的HTML和图片信息
- * 
+ *
  * 注意：此函数是异步的，因为语法高亮需要异步操作。
- * 
+ *
  * @param markdown - 原始Markdown文本，通常从Notion页面中提取
  * @param images - 图片数组参数（当前未使用，保留用于未来扩展）
  * @returns 返回一个Promise，解析为ConversionResult对象，包含处理后的HTML和图片信息
  */
-export async function convertMarkdownToHtml(markdown: string, images: NotionImage[]): Promise<ConversionResult> {
+export async function convertMarkdownToHtml(
+  markdown: string,
+  images: NotionImage[]
+): Promise<ConversionResult> {
   // 设置marked选项
-  marked.setOptions({ 
-    renderer,     // 使用自定义渲染器，确保HTML结构与主题样式匹配
-    breaks: true,  // 支持换行符转义，将单个换行符转换为<br>标签
-    gfm: true      // 支持GitHub风格的Markdown，包括表格、任务列表等扩展语法
+  marked.setOptions({
+    renderer, // 使用自定义渲染器，确保HTML结构与主题样式匹配
+    breaks: true, // 支持换行符转义，将单个换行符转换为<br>标签
+    gfm: true, // 支持GitHub风格的Markdown，包括表格、任务列表等扩展语法
   })
-  
+
   // 将Markdown转换为HTML
   // marked库会根据我们定义的渲染器规则将Markdown转换为HTML结构
   const html = await marked.parse(markdown)
-  
+
   // 返回处理结果
   return { html, images }
 }
@@ -172,10 +177,10 @@ export async function convertMarkdownToHtml(markdown: string, images: NotionImag
 /**
  * 从Markdown文本中提取图片URL
  * 扫描Markdown文本，找出所有的图片引用，并提取其URL信息。
- * 
+ *
  * 这个函数主要用于分析和处理Markdown中的图片资源，
  * 虽然在当前流程中不是核心功能，但为未来可能的图片预处理提供了接口。
- * 
+ *
  * @param markdown - 包含图片引用的Markdown文本
  * @returns 返回一个NotionImage数组，每个元素包含原始图片URL信息
  */
@@ -184,7 +189,7 @@ export function extractImagesFromMarkdown(markdown: string): NotionImage[] {
   // 格式：![替代文本](图片URL)
   const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g
   const images: NotionImage[] = []
-  
+
   // 遍历所有匹配项，提取图片URL
   for (const m of markdown.matchAll(imageRegex)) {
     // m[0] - 完整匹配
@@ -192,21 +197,21 @@ export function extractImagesFromMarkdown(markdown: string): NotionImage[] {
     // m[2] - 图片URL
     images.push({ originalUrl: m[2] })
   }
-  
+
   return images
 }
 
 /**
  * 测试Notion图片URL转换的函数
  * 用于验证图片URL转换逻辑是否正确工作。
- * 
+ *
  * 这个函数使用模拟数据测试URL转换功能，包括：
  * 1. 测试附件格式URL的转换
  * 2. 验证页面ID提取是否正确
  * 3. 检查最终URL格式是否符合预期
- * 
+ *
  * 主要用于开发和调试阶段，确保图片URL转换逻辑的正确性。
- * 
+ *
  * @returns 返回转换后的Markdown文本，可用于验证转换结果
  */
 export function testConvertNotionImageUrls() {
@@ -243,17 +248,17 @@ User ID: 1d4d872b-594c-81a1-91fd-000244fc4a14
 /**
  * 转换Notion图片URL为可访问的URL
  * 处理Notion特有的图片URL格式，将其转换为可以直接访问的格式。
- * 
+ *
  * Notion使用特殊的图片URL格式，包括：
  * 1. 附件格式：attachment:文件ID:文件名
  * 2. 内部域名：file.notion.so
  * 这些格式在外部环境中无法直接访问，需要转换为标准格式。
- * 
+ *
  * 转换流程：
  * 1. 从Markdown中提取页面ID（32位十六进制字符串）
  * 2. 识别并转换各种Notion图片URL格式
  * 3. 构建可直接访问的Notion图片URL
- * 
+ *
  * @param markdown - 包含Notion图片URL的Markdown文本
  * @returns 返回转换后的Markdown文本，所有图片URL都已转换为可访问格式
  */
@@ -262,7 +267,7 @@ export function convertNotionImageUrls(markdown: string): string {
   // 页面ID是构建可访问图片URL的关键参数
   const pageIdMatch = markdown.match(/([a-f0-9]{32})/)
   const pageId = pageIdMatch ? pageIdMatch[1] : null
-  
+
   // 使用正则表达式替换所有图片URL
   return markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
     // 处理Notion附件URL格式：attachment:文件ID:文件名
@@ -276,11 +281,11 @@ export function convertNotionImageUrls(markdown: string): string {
         return `![${alt}](${convertedUrl})`
       }
     }
-    
+
     // 修复URL中的&字符
     // 有时URL中的&会被转义为&amp;，需要还原
     const cleanUrl = url.includes('&') ? url.replace(/&/g, '&') : url
-    
+
     // 检查是否已经是正确格式的Notion图片URL
     // 如果是，则不需要进一步处理
     if (
@@ -290,14 +295,14 @@ export function convertNotionImageUrls(markdown: string): string {
     ) {
       return `![${alt}](${cleanUrl})`
     }
-    
+
     // 转换其他Notion相关URL
     // 包括file.notion.so等内部域名
     if (cleanUrl.includes('notion.so') || cleanUrl.includes('file.notion.so')) {
       const convertedUrl = convertNotionImageUrl(cleanUrl)
       return `![${alt}](${convertedUrl})`
     }
-    
+
     // 非Notion URL保持不变
     return match
   })
@@ -306,10 +311,10 @@ export function convertNotionImageUrls(markdown: string): string {
 /**
  * 转换单个Notion图片URL
  * 将Notion内部域名转换为可公开访问的域名格式。
- * 
+ *
  * 这个函数处理特定类型的Notion图片URL，主要是将file.notion.so域名
  * 转换为www.notion.so/image域名，使图片可以在外部环境中访问。
- * 
+ *
  * @param url - 原始Notion图片URL，通常是内部域名格式
  * @returns 返回转换后的URL，使用可公开访问的域名
  */
