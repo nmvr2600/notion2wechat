@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "Notion2WeChat",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Convert Notion articles to WeChat Official Account format",
+    "description": "Description of the extension"
+  }
+}

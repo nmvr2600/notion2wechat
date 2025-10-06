@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "Notion2WeChat",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "将Notion文章转换为微信公众号格式",
+    "description": "Description of the extension"
+  }
+}
