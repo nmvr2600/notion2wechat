@@ -44,7 +44,6 @@ sequenceDiagram
     participant generateContent as generateContent()
     participant extractNotionContent as extractNotionContent()
     participant extractMarkdownFromElement as extractMarkdownFromElement()
-    participant convertNotionImageUrls as convertNotionImageUrls()
     participant convertMarkdownToHtml as convertMarkdownToHtml()
     participant marked as marked()
     participant processNotionImages as processNotionImages()
@@ -111,35 +110,29 @@ sequenceDiagram
 
 ### 4. 内容转换阶段
 - 使用 marked.js 库将 Markdown 转换为 HTML
-  - 在 `src/utils/markdown.ts` 文件的 `convertMarkdownToHtml` 函数中，第 199 行调用 `marked(markdown)` 进行转换
-  - 该函数在 `src/content/index.ts` 的第 360 行被调用：`const result = await convertMarkdownToHtml(notionData.content, [])`
- - 应用自定义渲染器处理特殊元素（标题、代码块、引用等）
-  - 对代码块进行语法高亮处理
-  - 处理图片 URL 中的 HTML 实体编码问题
-- 图片处理现在在 `processNotionImages` 函数中进行（而不是在 Markdown 转换阶段）
-  - 此步骤发生在 HTML 转换之后，预览显示之前
-  - 不再预先转换 attachment 格式图片 URL，而是直接处理
+  - 在 `src/utils/markdown.ts` 文件的 `convertMarkdownToHtml` 函数中，调用 `marked(markdown)` 进行转换
+  - 该函数在 `src/content/index.ts` 的 `generateContent` 方法中被调用
+- 应用自定义渲染器处理特殊元素（标题、代码块、引用等）
+- 对代码块进行语法高亮处理
+- 不再预先处理图片 URL，而是在 HTML 转换后进行处理
 
 ### 5. 图片处理阶段
 - 在预览显示之前，对转换后的 HTML 进行图片处理
 - 遍历 HTML 中的图片元素，查找并转换 attachment 格式的图片为 base64 编码
 - 使用 canvas 技术将页面中的原始图片转换为 base64 格式，确保预览中图片正确加载
+- 对于非 attachment 格式的 Notion 图片 URL，保留原样，依赖浏览器处理身份验证
 
 ### 6. 预览显示阶段
 - 将转换后的 HTML 应用所选主题样式
+- 使用 juice 库将 CSS 样式转换为内联样式，确保在微信公众号编辑器中生效
 - 在侧边栏预览区域显示转换后的内容
 
 ### 7. 内容复制阶段
 - 用户点击"复制"按钮
 - 将预览内容转换为适合微信公众号编辑器的 HTML 格式
-- 将图片转换为 base64 格式以确保在公众号编辑器中正确显示
 - 使用 Clipboard API 将 HTML 内容写入剪贴板
 
 ### 8. 输出阶段
-- 提示用户复制成功
-- 用户可在微信公众号编辑器中直接粘贴内容
-
-### 7. 输出阶段
 - 提示用户复制成功
 - 用户可在微信公众号编辑器中直接粘贴内容
 
@@ -165,11 +158,10 @@ sequenceDiagram
 
 ### 主题系统
 1. **CSS 解析**: 解析主题 CSS 规则，提取选择器和样式
-2. **内联样式**: 将 CSS 样式转换为内联样式，确保在微信公众号编辑器中生效
+2. **内联样式**: 使用 juice 库将 CSS 样式转换为内联样式，确保在微信公众号编辑器中生效
 3. **动态切换**: 支持实时切换不同主题并更新预览
 
 ### 代码高亮
-1. **自定义渲染**: 使用 marked.js 的自定义渲染器处理代码块，生成带有 `shiki-code` 类和 `data-language` 属性的代码块结构
-2. **语法识别**: 识别不同编程语言并存储在 `data-language` 属性中，为后续可能的语法高亮处理做准备
+1. **自定义渲染**: 使用 marked.js 的自定义渲染器处理代码块，生成带有 `hljs` 类和语言标识的代码块结构
+2. **语法识别**: 使用 highlight.js 识别不同编程语言并应用相应的语法高亮样式
 3. **内联样式**: 使用内联样式确保在公众号编辑器中保持高亮效果
-4. **后处理**: 由于 marked 渲染器是同步的而语法高亮通常是异步操作，代码高亮在 `convertMarkdownToHtml` 函数中进行后处理
