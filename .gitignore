@@ -7,3 +7,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Extension build files
+*.crx
+*.zip
+key.pem
+*.pem
