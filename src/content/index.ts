@@ -519,19 +519,24 @@ class Notion2WeChat {
       // 为段落元素添加字体大小和内边距样式
       const styledHtml = this.applyAdditionalStyles(processedHtml, theme)
 
-      // 使用 juice 内联 CSS 样式
-      const htmlWithStyles = `<section id="nice">${styledHtml}</section>`
-      const fullHtml = `<style>${theme.styles}</style>${htmlWithStyles}`
-      const inlinedHtml = juice(fullHtml, { removeStyleTags: false })
+      // 获取基础样式（highlight.js 样式和默认代码样式）
+      import('@/utils/themes').then((themes) => {
+        const baseStyles = themes.highlightJsStyles + themes.defaultCodeStyles;
+        
+        // 使用 juice 内联 CSS 样式，将基础样式和主题样式组合
+        const htmlWithStyles = `<section id="nice">${styledHtml}</section>`
+        const fullHtml = `<style>${baseStyles}${theme.styles}</style>${htmlWithStyles}`
+        const inlinedHtml = juice(fullHtml, { removeStyleTags: false })
 
-      previewContent.innerHTML = inlinedHtml
+        previewContent.innerHTML = inlinedHtml
 
-      // 添加可选择的样式
-      const pc = previewContent as HTMLElement
-      pc.style.userSelect = 'text'
-      pc.style.setProperty('-webkit-user-select', 'text')
-      pc.style.setProperty('-moz-user-select', 'text')
-      pc.style.setProperty('-ms-user-select', 'text')
+        // 添加可选择的样式
+        const pc = previewContent as HTMLElement
+        pc.style.userSelect = 'text'
+        pc.style.setProperty('-webkit-user-select', 'text')
+        pc.style.setProperty('-moz-user-select', 'text')
+        pc.style.setProperty('-ms-user-select', 'text')
+      })
     }
   }
 
@@ -625,9 +630,13 @@ class Notion2WeChat {
         previewHtml = tempDiv.innerHTML
       }
 
-      // 使用 juice 内联 CSS 样式
+      // 获取基础样式（highlight.js 样式和默认代码样式）
+      const themes = await import('@/utils/themes');
+      const baseStyles = themes.highlightJsStyles + themes.defaultCodeStyles;
+
+      // 使用 juice 内联 CSS 样式，将基础样式和主题样式组合
       const htmlWithStyles = `<section id="nice">${previewHtml}</section>`
-      const fullHtml = `<style>${theme.styles}</style>${htmlWithStyles}`
+      const fullHtml = `<style>${baseStyles}${theme.styles}</style>${htmlWithStyles}`
       const inlinedHtml = juice(fullHtml, { removeStyleTags: true })
 
       // 使用Clipboard API直接写入富文本HTML

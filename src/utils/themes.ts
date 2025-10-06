@@ -1,7 +1,7 @@
 import type { Theme } from '@/types'
 
-// highlight.js 样式
-const highlightJsStyles = `
+// highlight.js 样式 - 作为基础样式
+export const highlightJsStyles = `
 /* highlight.js 样式 */
 #nice pre code.hljs {
   display: block;
@@ -91,6 +91,40 @@ const highlightJsStyles = `
 }
 `
 
+// VS Code 2025 风格的代码高亮样式 - 作为默认代码块样式
+export const defaultCodeStyles = `
+/* 代码块样式 */
+#nice pre {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#nice pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #d4d4d4;
+  display: block;
+}
+
+/* 行内代码样式 */
+#nice .inline-code {
+  background-color: rgba(110, 118, 129, 0.2);
+  color: #d73a49;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+`
+
+// 各主题的特定样式（不包含 highlight.js 样式和代码块样式）
 const blue = `/* 全局属性
  * 页边距 padding: 30px;
  * 全文字体 font-family: ptima-Regular;
@@ -331,8 +365,6 @@ const red = `
     border-radius: 16px;
 }
 
-${highlightJsStyles}
-
 /* 段落 */
 #nice p {
     line-height: 1.75;
@@ -384,15 +416,21 @@ ${highlightJsStyles}
 #nice ul {
     color: #f83929;
     font-size: 16px;
+    list-style-type: disc;
 }
 
 /* 有序列表整体样式 */
 #nice ol {
     color: #f83929;
     font-size: 16px;
+    list-style-type: decimal;
 }
 
 /* 列表内容 */
+#nice li {
+    color: #353535;
+}
+
 #nice li section {
     color: #353535;
 }
@@ -409,7 +447,7 @@ ${highlightJsStyles}
 }
 
 #nice .multiquote-1:before {
-    content: """;
+    content: "";
     display: block;
     font-size: 2em;
     color: rgb(248, 57, 41);
@@ -427,7 +465,7 @@ ${highlightJsStyles}
 }
 
 #nice .multiquote-1:after {
-    content: """;
+    content: "";
     float: right;
     display: block;
     font-size: 2em;
@@ -502,7 +540,7 @@ ${highlightJsStyles}
     color: rgb(271, 93, 108);
 }
 
-/* 代码块样式 */
+/* 代码块样式（红色主题自定义） */
 #nice pre {
   background-color: #1e1e1e;
   border-radius: 8px;
@@ -521,7 +559,7 @@ ${highlightJsStyles}
   color: #d4d4d4;
 }
 
-/* 行内代码样式 */
+/* 行内代码样式（红色主题自定义） */
 #nice .inline-code {
   background-color: rgba(248, 57, 41, 0.1);
   color: #f83929;
@@ -622,8 +660,6 @@ const black = `
   padding:10px;
 }
 
-${highlightJsStyles}
-
 /*图片下提示*/
 #nice figcaption{
   font-size:12px;
@@ -644,11 +680,15 @@ ${highlightJsStyles}
  * 首行缩进 text-indent: 2em;
  */
 #nice p {
-  font-size:14px;
+  font-size: 16px;
+  margin: 15px 0;
+  line-height: 1.6;
+  color: #3e3e3e;
 }
 
 /* 一级标题 */
 #nice h1 {
+  font-size: 24px;
 }
 
 /* 一级标题内容 */
@@ -674,6 +714,7 @@ ${highlightJsStyles}
     padding-bottom: 12px;
     margin:70px 30px 30px;
     border: 1px solid #000;
+    font-size: 20px;
 }
 
 #nice h2:before{
@@ -741,7 +782,7 @@ ${highlightJsStyles}
   color:#fff;
   padding:2px 10px;
   width:fit-content;
-  font-size:17px;
+  font-size:18px;
   margin:60px auto 10px;
 }
 #nice h3 strong {
@@ -765,6 +806,7 @@ ${highlightJsStyles}
  */
 #nice ul {
   list-style-type: square;
+  font-size: 16px;
 }
 /* 无序二级列表
  */
@@ -777,6 +819,7 @@ ${highlightJsStyles}
  */
 #nice ol {
   list-style-type: decimal;
+  font-size: 16px;
 }
 
 /* 列表内容，不要设置li
@@ -842,7 +885,7 @@ ${highlightJsStyles}
   color:#ff6441;
 }
 
-/* 代码块样式 */
+/* 代码块样式（黑色主题自定义） */
 #nice pre {
   background-color: #1e1e1e;
   border-radius: 8px;
@@ -861,7 +904,7 @@ ${highlightJsStyles}
   color: #d4d4d4;
 }
 
-/* 行内代码样式 */
+/* 行内代码样式（黑色主题自定义） */
 #nice .inline-code {
   background-color: rgba(255, 100, 65, 0.1);
   color: #ff6441;
@@ -892,7 +935,7 @@ ${highlightJsStyles}
  */
 #nice table tr th,
 #nice table tr td {
-  font-size:14px;
+  font-size: 16px;
 }
 
 /* 脚注文字 */
@@ -907,7 +950,7 @@ ${highlightJsStyles}
  * 内容 content: "参考资料";
  */
 #nice .footnotes-sep {
-  font-size: 14px;
+  font-size: 16px;
   color: #888;
   border-top: 1px solid #eee;
   padding: 30px 0 10px 0px;
@@ -919,25 +962,26 @@ ${highlightJsStyles}
   content:'参考资料';
 }
 #nice .footnotes{
+  font-size: 16px;
   border-left:5px solid #eee;
   padding-left:10px;
 }
 
 /* 参考资料编号 */
 #nice .footnote-num {
-  font-size:14px;
+  font-size:16px;
   color:#999;
 }
 
 /* 参考资料文字 */
 #nice .footnote-item p { 
-  font-size:14px;
+  font-size:16px;
   color:#999;
 }
 
 /* 参考资料解释 */
 #nice .footnote-item p em {
-  font-size:14px;
+  font-size:16px;
   color:#999;
 }
 
@@ -975,8 +1019,6 @@ const yellow = `
 /*自定义样式，实时生效*/
 #nice {
 }
-
-${highlightJsStyles}
 
 #nice p {
 	font-size: 16px;
@@ -1146,7 +1188,7 @@ list-style-type: decimal;
   margin: 3px;
 }
 
-/* 代码块样式 */
+/* 代码块样式（黄色主题自定义） */
 #nice pre {
   background-color: #1e1e1e;
   border-radius: 8px;
@@ -1165,7 +1207,7 @@ list-style-type: decimal;
   color: #d4d4d4;
 }
 
-/* 行内代码样式 */
+/* 行内代码样式（黄色主题自定义） */
 #nice .inline-code {
   background-color: rgba(249, 191, 69, 0.1);
   color: #9b6e23;
@@ -1246,38 +1288,6 @@ list-style-type: decimal;
 }
 `
 
-// VS Code 2025 风格的代码高亮样式
-const vscodeCodeStyles = `
-/* 代码块样式 */
-#nice pre {
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  padding: 16px;
-  overflow-x: auto;
-  margin: 16px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-#nice pre code {
-  background-color: transparent;
-  padding: 0;
-  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #d4d4d4;
-  display: block;
-}
-
-/* 行内代码样式 */
-#nice .inline-code {
-  background-color: rgba(110, 118, 129, 0.2);
-  color: #d73a49;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.9em;
-}
-`
 const orange = `
 /* 全局属性
  * 页边距 padding: 30px;
@@ -1308,7 +1318,7 @@ const orange = `
  * 首行缩进 text-indent: 2em;
  */
 #nice p {
-font-size: 16px; padding-top: 8px; padding-bottom: 8px; margin: 0; line-height: 26px; color: black;
+font-size: 16px; padding-top: 8px; padding-bottom: 8px; margin: 15px 0; line-height: 26px; color: black;
 }
 /* 一级标题 */
 #nice h1 {
@@ -1418,12 +1428,36 @@ list-style-type: decimal;
 #nice p code, #nice li code {
   color: rgb(239, 112, 96);
 }
-/* 非微信代码块
- * 代码块不换行 display: -webkit-box !important;
- * 代码块换行 display: block;
- */
-#nice pre code {
+
+/* 代码块样式（橙色主题自定义） */
+#nice pre {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+#nice pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #d4d4d4;
+}
+
+/* 行内代码样式（橙色主题自定义） */
+#nice .inline-code {
+  background-color: rgba(239, 112, 96, 0.1);
+  color: rgb(239, 112, 96);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+
 /*
  * 表格内的单元格
  * 字体大小 font-size: 16px;
@@ -1466,40 +1500,35 @@ list-style-type: decimal;
 }
 `
 
+const defaultStyle= `
+ #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice img { max-width: 100%; height: auto; display: block; margin: 15px auto; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } 
+`
 
+// 创建主题的函数，只包含主题特定样式
+function createTheme(name: string, themeStyles: string): Theme {
+  return {
+    name,
+    styles: themeStyles
+  };
+}
 
 // 默认主题
-export const defaultTheme: Theme = {
-  name: '默认',
-  styles: ` #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice img { max-width: 100%; height: auto; display: block; margin: 15px auto; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } ${vscodeCodeStyles} #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } ${highlightJsStyles}`,
-}
+export const defaultTheme: Theme = createTheme('默认', defaultStyle)
 
 // 蓝色主题
-export const blueTheme: Theme = {
-  name: '蓝色',
-  styles: blue,
-}
+export const blueTheme: Theme = createTheme('蓝色', blue)
 
 // 红色主题
-export const redTheme: Theme = {
-  name: '红色',
-  styles: red,
-}
+export const redTheme: Theme = createTheme('红色', red)
 
-export const blackTheme: Theme = {
-  name: '黑色',
-  styles: black,
-}
+// 黑色主题
+export const blackTheme: Theme = createTheme('黑色', black)
 
-export const yellowTheme: Theme = {
-  name: '黄色',
-  styles: yellow,
-}
+// 黄色主题
+export const yellowTheme: Theme = createTheme('黄色', yellow)
 
-export const orangeTheme: Theme = {
-  name: '橙色',
-  styles: orange,
-}
+// 橙色主题
+export const orangeTheme: Theme = createTheme('橙色', orange)
 
 // 获取所有主题
 export function getAllThemes(): Theme[] {
