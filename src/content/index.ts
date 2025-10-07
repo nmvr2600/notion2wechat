@@ -1,7 +1,7 @@
 import type { NotionPageData, Theme } from '@/types'
 import { processNotionImages } from '@/utils/imageProcessor'
 import { convertMarkdownToHtml, testConvertNotionImageUrls } from '@/utils/markdown'
-import { defaultTheme, getAllThemes, highlightJsStyles, defaultCodeStyles } from '@/utils/themes'
+import { defaultCodeStyles, defaultTheme, getAllThemes, highlightJsStyles } from '@/utils/themes'
 import juice from 'juice/client'
 
 class Notion2WeChat {
@@ -521,8 +521,8 @@ class Notion2WeChat {
 
       // 获取基础样式（highlight.js 样式和默认代码样式）
       // 直接使用已导入的样式，避免动态导入
-      const baseStyles = highlightJsStyles + defaultCodeStyles;
-      
+      const baseStyles = highlightJsStyles + defaultCodeStyles
+
       // 使用 juice 内联 CSS 样式，将基础样式和主题样式组合
       const htmlWithStyles = `<section id="nice">${styledHtml}</section>`
       const fullHtml = `<style>${baseStyles}${theme.styles}</style>${htmlWithStyles}`
@@ -551,18 +551,18 @@ class Notion2WeChat {
     // 如果使用的是yellow主题，为段落元素添加额外样式
     if (theme.name === '黄色') {
       const paragraphs = tempDiv.querySelectorAll('p')
-      paragraphs.forEach(p => {
+      for (const p of paragraphs) {
         // 确保段落元素有字体大小、上内边距和下内边距样式
         if (!p.style.fontSize || p.style.fontSize === '') {
           p.style.fontSize = '16px'
         }
         if (!p.style.paddingTop || p.style.paddingTop === '') {
-          p.style.paddingTop = '8px'
+          p.style.paddingTop = '10px'
         }
         if (!p.style.paddingBottom || p.style.paddingBottom === '') {
-          p.style.paddingBottom = '8px'
+          p.style.paddingBottom = '10px'
         }
-      })
+      }
     }
 
     return tempDiv.innerHTML

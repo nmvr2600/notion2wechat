@@ -4,14 +4,14 @@
   <p>一键将 Notion 文章转换为微信公众号格式的 Chrome 扩展</p>
   
   <p>
-    <a href="https://github.com/your-username/notion2wechat/stargazers">
-      <img src="https://img.shields.io/github/stars/your-username/notion2wechat" alt="GitHub Stars">
+    <a href="https://github.com/nmvr2600/notion2wechat/stargazers">
+      <img src="https://img.shields.io/github/stars/nmvr2600/notion2wechat" alt="GitHub Stars">
     </a>
-    <a href="https://github.com/your-username/notion2wechat/blob/main/LICENSE">
-      <img src="https://img.shields.io/github/license/your-username/notion2wechat" alt="License">
+    <a href="https://github.com/nmvr2600/notion2wechat/blob/main/LICENSE">
+      <img src="https://img.shields.io/github/license/nmvr2600/notion2wechat" alt="License">
     </a>
-    <a href="https://github.com/your-username/notion2wechat/releases">
-      <img src="https://img.shields.io/github/v/release/your-username/notion2wechat" alt="Version">
+    <a href="https://github.com/nmvr2600/notion2wechat/releases">
+      <img src="https://img.shields.io/github/v/release/nmvr2600/notion2wechat" alt="Version">
     </a>
     <a href="./docs/privacy.html">
       <img src="https://img.shields.io/badge/privacy-policy-blue" alt="Privacy Policy">
@@ -46,12 +46,12 @@ Notion2WeChat 是一款专为内容创作者设计的 Chrome 浏览器扩展，�
 2. 搜索 "Notion2WeChat"
 3. 点击 "添加至 Chrome" 按钮完成安装
 
-> ⚠️ **注意**：扩展尚未发布到商店，可通过 [GitHub Actions](https://github.com/your-username/notion2wechat/actions) 下载最新构建版本
+> ⚠️ **注意**：扩展尚未发布到商店，可通过 [GitHub Actions](https://github.com/nmvr2600/notion2wechat/actions) 下载最新构建版本
 
 ### 开发者模式安装
 ```bash
 # 克隆项目
-git clone https://github.com/your-username/notion2wechat.git
+git clone https://github.com/nmvr2600/notion2wechat.git
 
 # 进入项目目录
 cd notion2wechat
@@ -70,7 +70,7 @@ pnpm run build
 4. 选择项目中的 `dist` 文件夹
 
 ### 直接下载安装
-⚡ **快速下载**：访问 [GitHub Actions](https://github.com/your-username/notion2wechat/actions) 页面
+⚡ **快速下载**：访问 [GitHub Actions](https://github.com/nmvr2600/notion2wechat/actions) 页面
 - 点击最新的构建任务
 - 在 "Artifacts" 部分下载 `extension-zip`
 - 解压后按照上述开发者模式安装
@@ -168,11 +168,11 @@ pnpm run format
 - [Highlight.js](https://highlightjs.org/) - 代码语法高亮
 - [Juice](https://github.com/Automattic/juice) - CSS 内联工具
 - 感谢这些主题的原作者，无法一一联系在此致谢
-- 所有为项目贡献过代码的[贡献者们](https://github.com/your-username/notion2wechat/graphs/contributors)
+- 所有为项目贡献过代码的[贡献者们](https://github.com/nmvr2600/notion2wechat/graphs/contributors)
 
 ## 📞 联系我们
 
 如有任何问题或建议，请通过以下方式联系我们：
 
-- 提交 [Issue](https://github.com/your-username/notion2wechat/issues)
-- 发送邮件至 [your-email@example.com](mailto:your-email@example.com)
+- 提交 [Issue](https://github.com/nmvr2600/notion2wechat/issues)
+- 发送邮件至项目维护者

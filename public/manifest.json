@@ -4,38 +4,19 @@
   "version": "1.0.0",
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
-  "permissions": [
-    "activeTab",
-    "storage"
-  ],
-  "host_permissions": [
-    "https://www.notion.so/*"
-  ],
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": ["https://www.notion.so/*"],
   "content_scripts": [
     {
-      "matches": [
-        "https://www.notion.so/*"
-      ],
-      "js": [
-        "content.js"
-      ],
-      "css": [
-        "styles.css"
-      ]
+      "matches": ["https://www.notion.so/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "*.css",
-        "*.js",
-        "*.wasm",
-        "assets/*",
-        "assets/**/*"
-      ],
-      "matches": [
-        "https://www.notion.so/*"
-      ]
+      "resources": ["*.css", "*.js", "*.wasm", "assets/*", "assets/**/*"],
+      "matches": ["https://www.notion.so/*"]
     }
   ],
   "background": {
