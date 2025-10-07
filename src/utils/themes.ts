@@ -1354,6 +1354,7 @@ font-size: 16px; padding-top: 8px; padding-bottom: 8px; margin: 15px 0; line-hei
 }
 /* 二级标题 */
 #nice h2 {
+  margin: 40px 0 20px 0;
   border-bottom: 2px solid rgb(239, 112, 96);
   font-size: 1.3em;
 }
