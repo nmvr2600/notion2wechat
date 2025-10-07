@@ -46,7 +46,11 @@ Notion2WeChat 是一款专为内容创作者设计的 Chrome 浏览器扩展，�
 2. 搜索 "Notion2WeChat"
 3. 点击 "添加至 Chrome" 按钮完成安装
 
-> ⚠️ **注意**：扩展尚未发布到商店，可通过 [GitHub Actions](https://github.com/nmvr2600/notion2wechat/actions) 下载最新构建版本
+### Microsoft Edge Add-ons
+插件现已发布到 Microsoft Edge 商店，访问以下链接安装：
+[Notion2WeChat on Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/notion2wechat/bcbilhmidmhbjkcnkjakpbflagglgdlf)
+
+> ⚠️ **注意**：扩展尚未发布到 Chrome 商店，可通过 [GitHub Actions](https://github.com/nmvr2600/notion2wechat/actions) 下载最新构建版本
 
 ### 开发者模式安装
 ```bash

@@ -9,6 +9,7 @@ class Notion2WeChat {
   private button: HTMLElement | null = null
   private availableThemes: Theme[] = [defaultTheme]
   private currentHtmlContent = '' // 保存当前的原始HTML内容
+  private readonly THEME_STORAGE_KEY = 'notion2wechat_selected_theme'
 
   constructor() {
     this.init()
@@ -158,17 +159,21 @@ class Notion2WeChat {
 
     // 使用已加载的主题
     const themesToRender = this.availableThemes
+    
+    // 获取保存的主题选择
+    const savedTheme = this.getSavedTheme()
+    const defaultThemeName = savedTheme || themesToRender[0]?.name || '默认'
 
     this.sidebar.innerHTML = `
       <div class="resize-handle"></div>
       <div class="sidebar-header">
-        <button class="close-btn">&times;</button>
+        <button class="close-btn">×</button>
         <div class="controls">
           <select id="theme-select">
             ${themesToRender
               .map(
                 (theme) =>
-                  `<option value="${theme.name}">${this.getThemeDisplayName(theme.name)}</option>`
+                  `<option value="${theme.name}" ${theme.name === defaultThemeName ? 'selected' : ''}>${this.getThemeDisplayName(theme.name)}</option>`
               )
               .join('')}
           </select>
@@ -572,7 +577,36 @@ class Notion2WeChat {
     return themeName
   }
 
+  /**
+   * 保存用户选择的主题
+   */
+  private saveSelectedTheme(themeName: string): void {
+    try {
+      localStorage.setItem(this.THEME_STORAGE_KEY, themeName)
+    } catch (error) {
+      console.warn('Failed to save theme selection:', error)
+    }
+  }
+
+  /**
+   * 获取保存的主题选择
+   */
+  private getSavedTheme(): string | null {
+    try {
+      return localStorage.getItem(this.THEME_STORAGE_KEY)
+    } catch (error) {
+      console.warn('Failed to get saved theme:', error)
+      return null
+    }
+  }
+
   private updatePreviewTheme() {
+    // 保存当前选择的主题
+    const themeSelect = this.sidebar?.querySelector('#theme-select') as HTMLSelectElement
+    if (themeSelect) {
+      this.saveSelectedTheme(themeSelect.value)
+    }
+    
     // 使用保存的原始HTML内容重新生成预览以应用新主题
     if (this.currentHtmlContent) {
       const previewContent = this.sidebar?.querySelector('#preview-content')
