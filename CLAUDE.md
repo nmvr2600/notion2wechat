@@ -76,7 +76,6 @@ The project uses Vite with a custom configuration:
 - Builds separate bundles for content script, background script, and styles
 - Uses TypeScript for type checking
 - Outputs to `dist/` directory
-- Supports CSS preprocessing with PostCSS and Tailwind CSS
 
 ## Extension Structure
 

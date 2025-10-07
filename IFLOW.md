@@ -14,7 +14,6 @@ Notion2WeChat是一款Chrome浏览器扩展，旨在帮助内容创作者将Noti
 ### 技术栈
 - **语言**: TypeScript
 - **构建工具**: Vite
-- **样式框架**: Tailwind CSS
 - **浏览器扩展标准**: Chrome Extension Manifest V3
 - **Markdown解析**: Marked.js
 - **包管理**: pnpm

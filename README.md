@@ -95,7 +95,6 @@ pnpm run build
 
 - **语言**: [TypeScript](https://www.typescriptlang.org/)
 - **构建工具**: [Vite](https://vitejs.dev/)
-- **样式框架**: [Tailwind CSS](https://tailwindcss.com/)
 - **浏览器标准**: [Chrome Extension Manifest V3](https://developer.chrome.com/docs/extensions/mv3/)
 - **Markdown解析**: [Marked.js](https://marked.js.org/)
 - **代码高亮**: [Highlight.js](https://highlightjs.org/)
