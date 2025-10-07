@@ -14,7 +14,7 @@
     "dev": "vite build --mode development --watch",
     "build": "tsc && vite build",
     "build:crx": "pnpm run build && pnpm exec crx pack dist -o notion2wechat.crx",
-    "build:zip": "pnpm run build && cd dist && zip -r ../notion2wechat-v1.0.0.zip .",
+    "build:zip": "pnpm run build && cd dist && zip -r ../notion2wechat-v$(node -p \"require('./package.json').version\").zip ."
     "build:load": "pnpm run build && echo '请在浏览器开发者模式中加载 dist 文件夹'",
     "preview": "vite preview",
     "lint": "biome check .",

@@ -36,8 +36,20 @@ jobs:
     - name: Build extension
       run: pnpm run build
 
+    - name: Set version variable
+      run: |
+        if [ "${{ github.event_name }}" = "release" ]; then
+          echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+        else
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+        fi
+
     - name: Create zip package
-      run: pnpm run build:zip
+      run: |
+        cd dist
+        zip -r ../notion2wechat-v${{ env.VERSION }}.zip .
+        cd ..
 
     - name: Upload zip artifact
       uses: actions/upload-artifact@v4
@@ -46,40 +58,25 @@ jobs:
         path: notion2wechat-v*.zip
         retention-days: 30
 
-
   release:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Download artifact
+      uses: actions/download-artifact@v4
       with:
-        node-version: '20'
+        name: extension-zip
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: latest
-
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-
-    - name: Build extension
-      run: pnpm run build:zip
-
-    - name: List generated files
-      run: ls -la notion2wechat-v*.zip || echo "No zip files found"
+    - name: List files
+      run: ls -la
 
     - name: Upload release assets
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v4
       with:
         files: |
-          notion2wechat-v*.zip
+          notion2wechat-v${{ github.event.release.tag_name }}.zip
         overwrite: true
         fail_on_unmatched_files: true
       env:
