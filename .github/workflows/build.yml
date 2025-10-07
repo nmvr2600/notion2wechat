@@ -7,6 +7,7 @@ on:
     branches: [ main ]
   release:
     types: [ published ]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -71,10 +72,15 @@ jobs:
     - name: Build extension
       run: pnpm run build:zip
 
+    - name: List generated files
+      run: ls -la notion2wechat-v*.zip || echo "No zip files found"
+
     - name: Upload release assets
       uses: softprops/action-gh-release@v2
       with:
         files: |
           notion2wechat-v*.zip
+        overwrite: true
+        fail_on_unmatched_files: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
