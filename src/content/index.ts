@@ -159,7 +159,7 @@ class Notion2WeChat {
 
     // 使用已加载的主题
     const themesToRender = this.availableThemes
-    
+
     // 获取保存的主题选择
     const savedTheme = this.getSavedTheme()
     const defaultThemeName = savedTheme || themesToRender[0]?.name || '默认'
@@ -606,7 +606,7 @@ class Notion2WeChat {
     if (themeSelect) {
       this.saveSelectedTheme(themeSelect.value)
     }
-    
+
     // 使用保存的原始HTML内容重新生成预览以应用新主题
     if (this.currentHtmlContent) {
       const previewContent = this.sidebar?.querySelector('#preview-content')

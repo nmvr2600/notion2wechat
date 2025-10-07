@@ -2,6 +2,7 @@
   "name": "notion2wechat",
   "version": "1.0.0",
   "description": "Chrome extension to convert Notion articles to WeChat Official Account format",
+  "type": "module",
   "homepage": "https://github.com/nmvr2600/notion2wechat",
   "bugs": {
     "url": "https://github.com/nmvr2600/notion2wechat/issues"
@@ -29,6 +30,7 @@
     "autoprefixer": "^10.4.16",
     "crx": "^5.0.1",
     "postcss": "^8.4.31",
+    "postcss-load-config": "^6.0.1",
     "sharp": "^0.33.5",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",
