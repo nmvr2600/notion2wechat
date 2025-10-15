@@ -1,6 +1,7 @@
 /**
  * 处理Notion导出HTML中的图片
  * 解析HTML内容，查找并处理所有图片元素，包括修复URL编码问题和处理attachment格式的图片
+ * 为图片添加nice-img类名以便应用样式
  * @param html - 包含图片的HTML字符串
  * @returns 处理后的HTML字符串
  */

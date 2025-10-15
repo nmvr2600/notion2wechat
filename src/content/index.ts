@@ -530,10 +530,20 @@ class Notion2WeChat {
 
       // 使用 juice 内联 CSS 样式，将基础样式和主题样式组合
       const htmlWithStyles = `<section id="nice">${styledHtml}</section>`
-      const fullHtml = `<style>${baseStyles}${theme.styles}</style>${htmlWithStyles}`
+      const fullHtml = `<style id="code-styles">${baseStyles}</style><style id="theme-styles">${theme.styles}</style>${htmlWithStyles}`
       const inlinedHtml = juice(fullHtml, { removeStyleTags: false })
 
       previewContent.innerHTML = inlinedHtml
+      
+      // 确保代码块样式正确应用，特别是对于高亮代码块
+      const codeBlocks = previewContent.querySelectorAll('pre code[class*="language-"], pre code[class*="hljs"]')
+      codeBlocks.forEach((block: Element) => {
+        const codeElement = block as HTMLElement
+        // 确保代码块有正确的类名以激活语法高亮样式
+        if (!codeElement.classList.contains('hljs')) {
+          codeElement.classList.add('hljs')
+        }
+      })
 
       // 添加可选择的样式
       const pc = previewContent as HTMLElement
@@ -552,6 +562,8 @@ class Notion2WeChat {
     // 创建临时DOM元素来处理HTML
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = html
+
+
 
     // 如果使用的是yellow主题，为段落元素添加额外样式
     if (theme.name === '黄色') {

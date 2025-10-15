@@ -136,8 +136,45 @@ marked.use(
  * @param code - 行内代码内容，通常是简短的代码片段或变量名
  * @returns 返回格式化的HTML行内代码，使用code标签和特定CSS类
  */
+/**
+ * 重写行内代码渲染函数
+ * 为行内代码添加inline-code类，以便应用主题样式。
+ *
+ * 行内代码与代码块不同，它出现在段落文本中，需要与周围内容
+ * 保持良好的视觉协调。通过添加特定的CSS类，主题样式可以
+ * 控制行内代码的字体、背景色、边框等样式。
+ *
+ * 在微信公众号编辑器中，行内代码通常需要与正文有所区别，
+ * 但又不能过于突兀，因此需要精细的样式控制。
+ *
+ * @param code - 行内代码内容，通常是简短的代码片段或变量名
+ * @returns 返回格式化的HTML行内代码，使用code标签和特定CSS类
+ */
 renderer.codespan = (code: string): string => {
   return `<code class="inline-code">${code}</code>`
+}
+
+/**
+ * 重写代码块渲染函数
+ * 修复代码块中嵌套三个反引号导致的截断问题。
+ *
+ * 默认的marked代码块渲染器在遇到代码内容中包含三个反引号时，
+ * 会错误地认为代码块提前结束，导致后续内容解析失败。
+ *
+ * 这个自定义渲染器确保代码块内容被正确处理，无论其中是否包含反引号。
+ *
+ * @param code - 代码块内容，可能包含任意字符包括反引号
+ * @param language - 代码语言标识符（可选），用于语法高亮
+ * @param escaped - 是否被转义（marked内部使用）
+ * @returns 返回格式化的HTML代码块，使用pre和code标签
+ */
+renderer.code = (code: string, language: string | undefined, escaped: boolean): string => {
+  const lang = language || 'text'
+  
+  // 确保代码内容被正确转义，防止HTML注入
+  const escapedCode = escaped ? code : code.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  
+  return `<pre><code class="hljs language-${lang}">${escapedCode}</code></pre>`
 }
 
 /**

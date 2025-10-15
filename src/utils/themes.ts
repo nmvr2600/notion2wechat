@@ -95,32 +95,40 @@ export const highlightJsStyles = `
 export const defaultCodeStyles = `
 /* 代码块样式 */
 #nice pre {
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  padding: 16px;
-  overflow-x: auto;
-  margin: 16px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #1e1e1e !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  overflow-x: auto !important;
+  margin: 16px 0 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
 #nice pre code {
-  background-color: transparent;
-  padding: 0;
-  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #d4d4d4;
-  display: block;
+  background-color: transparent !important;
+  padding: 0 !important;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: #d4d4d4 !important;
+  display: block !important;
+}
+
+#nice code.hljs {
+  padding: 1em !important;
+  overflow-x: auto !important;
+  background: #1e1e1e !important;
+  color: #d4d4d4 !important;
+  border-radius: 8px !important;
 }
 
 /* 行内代码样式 */
 #nice .inline-code {
-  background-color: rgba(110, 118, 129, 0.2);
-  color: #d73a49;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.9em;
+  background-color: rgba(110, 118, 129, 0.2) !important;
+  color: #d73a49 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  font-size: 0.9em !important;
 }
 `
 
@@ -300,6 +308,13 @@ list-style-type: decimal;
 * 居左 margin: 0 0;
 */
 #nice img {
+  max-width: 100% !important;
+  height: auto;
+  display: block;
+  margin: 15px auto;
+  box-sizing: border-box;
+  border-radius: 6px;
+  object-fit: contain;
 }
 
 /* 图片描述文字 */
@@ -902,6 +917,10 @@ const black = `
   box-shadow: rgba(170, 170, 170, 0.48) 0px 0px 6px 0px;
   border-radius:4px;
   margin-top:10px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px auto;
 }
 /* 行内代码 */
 #nice p code, #nice li code {
@@ -1190,11 +1209,11 @@ list-style-type: decimal;
 * 居左 margin: 0 0;
 */
 #nice img {
-  width: 100%;
- border-radius: 5px;
- display: block;
- margin-bottom: 15px;
- height: auto;
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  display: block;
+  margin: 15px auto;
 }
 
 /* 图片描述文字 */
@@ -1444,6 +1463,10 @@ list-style-type: decimal;
  * 居左 margin: 0 0;
  */
 #nice img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 15px auto;
 }
 /* 图片描述文字 */
 #nice figcaption {
@@ -1525,7 +1548,7 @@ list-style-type: decimal;
 `
 
 const defaultStyle = `
- #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice img { max-width: 100%; height: auto; display: block; margin: 15px auto; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } 
+ #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } 
 `
 
 // 创建主题的函数，包含基础样式和主题特定样式
