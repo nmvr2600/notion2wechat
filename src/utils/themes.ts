@@ -184,10 +184,20 @@ const blue = `/* 全局属性
 
 /* 一级标题 */
 #nice h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 30px 0 20px 0;
+  padding: 10px 0;
+  text-align: center;
+  color: #3f3f3f;
+  line-height: 1.3;
+  border-bottom: 2px solid #2563eb;
 }
 
 /* 一级标题内容 */
 #nice h1 .content {
+  color: #2563eb;
+  font-weight: bold;
 }
 
 /* 一级标题修饰 请参考有实例的主题 */
@@ -1364,9 +1374,18 @@ font-size: 16px; padding-top: 8px; padding-bottom: 8px; margin: 15px 0; line-hei
 }
 /* 一级标题 */
 #nice h1 {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 30px 0;
+  padding: 10px 0;
+  text-align: center;
+  color: rgb(239, 112, 96);
+  border-bottom: 3px solid rgb(239, 112, 96);
 }
 /* 一级标题内容 */
 #nice h1 .content {
+  font-weight: bold;
+  color: inherit;
 }
 /* 一级标题修饰 请参考有实例的主题 */
 #nice h1:after {

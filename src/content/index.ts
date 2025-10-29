@@ -531,7 +531,15 @@ class Notion2WeChat {
       // 使用 juice 内联 CSS 样式，将基础样式和主题样式组合
       const htmlWithStyles = `<section id="nice">${styledHtml}</section>`
       const fullHtml = `<style id="code-styles">${baseStyles}</style><style id="theme-styles">${theme.styles}</style>${htmlWithStyles}`
-      const inlinedHtml = juice(fullHtml, { removeStyleTags: false })
+      // 优化juice配置，确保CSS正确内联
+      const inlinedHtml = juice(fullHtml, {
+        removeStyleTags: false,
+        preserveMediaQueries: true,
+        applyWidthAttributes: true,
+        applyHeightAttributes: true,
+        // 确保所有样式都被保留和内联
+        insertPreservedExtraCss: true,
+      })
 
       previewContent.innerHTML = inlinedHtml
       
@@ -643,12 +651,36 @@ class Notion2WeChat {
     }
 
     try {
-      // 直接获取预览区域的HTML内容，已经包含了所有样式和处理过的图片
-      const previewHtml = preview.innerHTML
+      // 获取预览区域的HTML内容
+      let previewHtml = preview.innerHTML
+
+      // 检查是否包含内联样式
+      // 如果没有 style 标签或者样式不完整，添加备用的 style 标签
+      const hasStyleTag = previewHtml.includes('<style')
+      const hasInlineStyles = previewHtml.includes('style=')
+
+      console.log('预览HTML包含style标签:', hasStyleTag)
+      console.log('预览HTML包含内联样式:', hasInlineStyles)
+
+      // 如果juice内联不完整，我们使用一个更简单的方法：
+      // 直接从完整的HTML（包含style标签）中提取section内容
+      if (!hasStyleTag && !hasInlineStyles) {
+        console.warn('样式未正确内联，尝试使用备用方案')
+        // 查找页面上的所有style标签
+        const allStyles = Array.from(document.querySelectorAll('style'))
+          .map(s => s.textContent || '')
+          .join('\n')
+
+        if (allStyles) {
+          console.log('找到备用样式，注入到HTML中')
+          // 在HTML开头添加style标签
+          previewHtml = `<style>${allStyles}</style>${previewHtml}`
+        }
+      }
 
       // 使用Clipboard API直接写入富文本HTML
-      console.log('写入剪贴板的HTML内容:', previewHtml)
-      console.log('HTML内容长度:', previewHtml.length)
+      console.log('写入剪贴板的HTML内容长度:', previewHtml.length)
+      console.log('写入剪贴板的HTML前200字符:', previewHtml.substring(0, 200))
 
       await navigator.clipboard.write([
         new ClipboardItem({
