@@ -36,69 +36,75 @@ async function processImage(img: HTMLImageElement): Promise<void> {
 
   // 处理Notion的attachment格式
   if (src.includes('attachment:')) {
-    await processAttachmentImage(src, img)
+    console.log('Processing attachment image:', src)
+    try {
+      // 先尝试直接替换src为真实URL
+      const realUrl = await findRealImageUrl(src)
+      if (realUrl) {
+        console.log('Found real image URL:', realUrl)
+        // 尝试加载并转换为base64
+        try {
+          img.src = realUrl
+          await loadImage(img)
+          await convertImageToBase64(img, img)
+        } catch (loadError) {
+          console.warn('Failed to load real image, keeping original:', loadError)
+          // 加载失败，保留原URL（虽然可能会显示错误）
+          img.src = realUrl
+        }
+      } else {
+        console.log('No real image URL found')
+      }
+    } catch (error) {
+      console.warn('Failed to process attachment image:', error)
+    }
     return
   }
 
-  // 处理其他Notion图片URL
+  // 处理其他Notion图片URL - 转换为base64
   if (src.includes('notion.so') || src.includes('notionusercontent.com')) {
-    // 对于其他Notion图片URL，保留原样
-    // 浏览器会自动处理身份验证
-    console.log('Keeping Notion image URL:', src)
+    console.log('Converting Notion image to base64:', src)
+    await convertImageToBase64(img, img)
   }
 }
 
 /**
- * 处理attachment格式的图片
- * 根据attachment格式的src查找匹配的图片元素，并将其转换为base64格式
- * @param src - attachment格式的图片src
- * @param img - 目标图片元素
+ * 从页面中找到与attachment对应的真实图片URL
  */
-async function processAttachmentImage(src: string, img: HTMLImageElement): Promise<void> {
-  console.log('Found attachment image, processing...')
-  try {
-    // 根据attachment的ID和文件名查找匹配的图片
-    const foundImage = findMatchingImage(src)
-
-    if (foundImage?.complete) {
-      // 如果图片已加载完成，转换为base64格式
-      await convertImageToBase64(foundImage, img)
-    } else {
-      console.log('Image not found or not loaded:', src)
-    }
-  } catch (error) {
-    console.warn('Failed to process attachment image:', error)
-  }
-}
-
-/**
- * 根据attachment格式的src查找匹配的图片元素
- * 从页面中查找具有相同ID或文件名的图片元素
- * @param src - attachment格式的src字符串，格式为"attachment:id:filename"
- * @returns 匹配的HTML图片元素，如果没有找到则返回null
- */
-function findMatchingImage(src: string): HTMLImageElement | null {
-  // 获取页面中所有图片元素
-  const pageImages = document.querySelectorAll('img')
-  // 解析attachment格式的src，提取ID和文件名
-  const parts = src.split(':')
+async function findRealImageUrl(attachmentSrc: string): Promise<string | null> {
+  // 解析attachment格式的src，提取ID和完整attachment标记
+  const parts = attachmentSrc.split(':')
   const attachmentId = parts.length >= 2 ? parts[1] : ''
-  const fileName = parts.length >= 3 ? parts[2] : ''
-  console.log('Looking for image id:', attachmentId, 'filename:', fileName)
+  const fullAttachment = `attachment:${attachmentId}:` // 重建完整的attachment标记
+  console.log('Looking for real image with attachment marker:', fullAttachment)
 
-  // 遍历页面中的图片，查找匹配的ID和文件名
-  for (const pageImg of Array.from(pageImages)) {
-    const pageSrc = pageImg.src || ''
-    // 检查ID是否匹配（如果提供了ID）
-    const idMatch = attachmentId ? pageSrc.includes(attachmentId) : true
-    // 检查文件名是否匹配（如果提供了文件名）
-    const nameMatch = fileName ? pageSrc.includes(fileName) : true
-    if (idMatch && nameMatch) {
-      console.log('Found matching image:', pageSrc)
-      return pageImg
+  // 从页面上的所有img元素中查找
+  const allImages = document.querySelectorAll('img')
+  console.log('Total images on page:', allImages.length)
+
+  for (const pageImg of Array.from(allImages)) {
+    const pageSrc = pageImg.getAttribute('src') || ''
+    console.log('Checking page image:', pageSrc)
+
+    // 将页面图片的src解码（处理%3A这样的编码）
+    const decodedPageSrc = decodeURIComponent(pageSrc)
+    console.log('Decoded page image src:', decodedPageSrc)
+
+    // 检查解码后的路径是否包含完整的attachment标记
+    const pathBeforeQuery = decodedPageSrc.split('?')[0]
+    if (pathBeforeQuery.includes(fullAttachment)) {
+      console.log('Found matching image by full attachment marker:', pageSrc)
+      // 如果是相对路径，转换为绝对路径
+      if (pageSrc.startsWith('/')) {
+        const absoluteUrl = `https://www.notion.so${pageSrc}`
+        console.log('Converted to absolute URL:', absoluteUrl)
+        return absoluteUrl
+      }
+      return pageSrc
     }
   }
 
+  console.log('No real image URL found')
   return null
 }
 

@@ -106,6 +106,16 @@ renderer.blockquote = (text: string): string =>
 renderer.image = (href: string, title: string | null, text: string): string => {
   // 修复URL中的&字符转义问题
   const cleanHref = href.includes('&') ? href.replace(/&/g, '&') : href
+
+  // 如果是attachment格式，保留原样，在后续处理中转换为base64
+  // 或者我们可以尝试从页面上找到对应的真实图片URL
+  if (cleanHref.includes('attachment:')) {
+    console.log('Found attachment image in markdown, will process later:', cleanHref)
+    // 暂时保留attachment格式，在processNotionImages中处理
+    const titleAttr = title ? ` title="${title}"` : ''
+    return `<img src="${cleanHref}" alt="${text}"${titleAttr}>`
+  }
+
   // 只有当标题存在时才添加title属性
   const titleAttr = title ? ` title="${title}"` : ''
   return `<img src="${cleanHref}" alt="${text}"${titleAttr}>`
