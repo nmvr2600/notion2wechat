@@ -1,4 +1,4 @@
-import type { Theme } from '@/types'
+import type { Theme } from "@/types";
 
 // highlight.js 样式 - 作为基础样式
 export const highlightJsStyles = `
@@ -16,13 +16,13 @@ export const highlightJsStyles = `
   color: #444
 }
 #nice .hljs-subst {
-  
+
 }
 #nice .hljs-formula,
 #nice .hljs-attr,
 #nice .hljs-property,
 #nice .hljs-params {
-  
+
 }
 #nice .hljs-comment {
   color: #697070
@@ -89,7 +89,7 @@ export const highlightJsStyles = `
 #nice .hljs-strong {
   font-weight: bold
 }
-`
+`;
 
 // VS Code 2025 风格的代码高亮样式 - 作为默认代码块样式
 export const defaultCodeStyles = `
@@ -130,7 +130,7 @@ export const defaultCodeStyles = `
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
   font-size: 0.9em !important;
 }
-`
+`;
 
 // 默认表格样式 - 作为基础表格样式
 export const defaultTableStyles = `
@@ -153,7 +153,32 @@ export const defaultTableStyles = `
   background-color: #f2f2f2;
   font-weight: bold;
 }
-`
+`;
+
+export const defaultMediaStyles = `
+#nice section.notion-image-container {
+  max-height: 400px;
+  overflow-y: auto;
+  width: 100%;
+  margin: 16px 0;
+  display: block;
+  background-color: #f8f8f8;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+#nice section.notion-image-container img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  border-radius: 4px !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+`;
 
 // 各主题的特定样式（不包含 highlight.js 样式和代码块样式）
 const blue = `/* 全局属性
@@ -278,7 +303,7 @@ list-style-type: decimal;
   padding: 0px;
 }
 
-/* 链接 
+/* 链接
  * border-bottom: 1px solid #009688;
  */
 #nice a {
@@ -324,8 +349,8 @@ list-style-type: decimal;
   margin: 15px auto;
   box-sizing: border-box;
   border-radius: 6px;
-  object-fit: contain;
 }
+
 
 /* 图片描述文字 */
 #nice figcaption {
@@ -381,7 +406,7 @@ list-style-type: decimal;
 }
 
 /* 参考资料文字 */
-#nice .footnote-item p { 
+#nice .footnote-item p {
 }
 
 /* 参考资料解释 */
@@ -396,8 +421,8 @@ list-style-type: decimal;
 
 /* 行内公式
  */
-#nice .inline-equation svg {  
-}`
+#nice .inline-equation svg {
+}`;
 
 const red = `
 /*自定义样式，实时生效*/
@@ -693,7 +718,7 @@ const red = `
     width: 100%;
     margin-bottom: 0;
 }
-`
+`;
 
 const black = `
 /* 自定义样式，实时生效，浏览器实时缓存 */
@@ -889,7 +914,7 @@ const black = `
 #nice .multiquote-1 p {
 }
 
-/* 链接 
+/* 链接
  * border-bottom: 1px solid #009688;
  */
 #nice a {
@@ -998,7 +1023,7 @@ const black = `
 #nice .footnote-ref {
 }
 
-/* "参考资料"四个字 
+/* "参考资料"四个字
  * 内容 content: "参考资料";
  */
 #nice .footnotes-sep {
@@ -1026,7 +1051,7 @@ const black = `
 }
 
 /* 参考资料文字 */
-#nice .footnote-item p { 
+#nice .footnote-item p {
   font-size:16px;
   color:#999;
 }
@@ -1045,7 +1070,7 @@ const black = `
 
 /* 行内公式
  */
-#nice .inline-equation svg {  
+#nice .inline-equation svg {
 }
 /* 文章结尾 */
 #nice:after{
@@ -1065,7 +1090,7 @@ const black = `
   border-radius: 0;
 }
 
-`
+`;
 
 const yellow = `
 /*自定义样式，实时生效*/
@@ -1299,7 +1324,7 @@ list-style-type: decimal;
   padding: 3px;
 }
 
-/* "参考资料"四个字 
+/* "参考资料"四个字
  * 内容 content: "参考资料";
  */
 #nice .footnotes-sep:before {
@@ -1313,7 +1338,7 @@ list-style-type: decimal;
 }
 
 /* 参考资料文字 */
-#nice .footnote-item p { 
+#nice .footnote-item p {
 }
 
 /* 参考资料解释 */
@@ -1328,7 +1353,7 @@ list-style-type: decimal;
 
 /* 行内公式
  */
-#nice .inline-equation svg {  
+#nice .inline-equation svg {
 }
 
 /* 滑动图片
@@ -1338,7 +1363,7 @@ list-style-type: decimal;
   width:100%;
   margin-bottom: 0;
 }
-`
+`;
 
 const orange = `
 /* 全局属性
@@ -1347,15 +1372,15 @@ const orange = `
  * 英文换行 word-break: break-all;
  */
 #nice {
-  font-size: 16px; 
-  color: black; 
-  padding: 0 10px; 
-  line-height: 1.6; 
-  word-spacing: 0px; 
-  letter-spacing: 0px; 
-  word-break: break-word; 
-  word-wrap: break-word; 
-  text-align: left; 
+  font-size: 16px;
+  color: black;
+  padding: 0 10px;
+  line-height: 1.6;
+  word-spacing: 0px;
+  letter-spacing: 0px;
+  word-break: break-word;
+  word-wrap: break-word;
+  text-align: left;
   font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 /* 段落，下方未标注标签参数均同此处
@@ -1451,7 +1476,7 @@ list-style-type: decimal;
 /* 引用文字 */
 #nice .multiquote-1 p {
 }
-/* 链接 
+/* 链接
  * border-bottom: 1px solid #009688;
  */
 #nice a {
@@ -1483,9 +1508,12 @@ list-style-type: decimal;
  */
 #nice img {
   max-width: 100%;
+  max-height: 600px;
   height: auto;
   display: block;
   margin: 15px auto;
+  overflow-y: auto;
+  object-position: top;
 }
 /* 图片描述文字 */
 #nice figcaption {
@@ -1541,7 +1569,7 @@ list-style-type: decimal;
 #nice .footnote-ref {
   color: rgb(239, 112, 96);
 }
-/* "参考资料"四个字 
+/* "参考资料"四个字
  * 内容 content: "参考资料";
  */
 #nice .footnotes-sep:before {
@@ -1550,7 +1578,7 @@ list-style-type: decimal;
 #nice .footnote-num {
 }
 /* 参考资料文字 */
-#nice .footnote-item p { 
+#nice .footnote-item p {
 }
 /* 参考资料解释 */
 #nice .footnote-item p em {
@@ -1562,45 +1590,56 @@ list-style-type: decimal;
 }
 /* 行内公式
  */
-#nice .inline-equation svg {  
+#nice .inline-equation svg {
 }
-`
+`;
 
 const defaultStyle = `
- #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; } 
-`
+ #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; }
+`;
 
 // 创建主题的函数，包含基础样式和主题特定样式
 function createTheme(name: string, themeStyles: string): Theme {
-  const allStyles = [highlightJsStyles, defaultCodeStyles, defaultTableStyles, themeStyles].join(
-    '\n'
-  )
+  const allStyles = [
+    highlightJsStyles,
+    defaultCodeStyles,
+    defaultTableStyles,
+    defaultMediaStyles,
+    themeStyles,
+  ].join("\n");
 
   return {
     name,
     styles: allStyles,
-  }
+  };
 }
 
 // 默认主题
-export const defaultTheme: Theme = createTheme('默认', defaultStyle)
+export const defaultTheme: Theme = createTheme("默认", defaultStyle);
 
 // 蓝色主题
-export const blueTheme: Theme = createTheme('微信', blue)
+export const blueTheme: Theme = createTheme("微信", blue);
 
 // 红色主题
-export const redTheme: Theme = createTheme('红绯', red)
+export const redTheme: Theme = createTheme("红绯", red);
 
 // 黑色主题
-export const blackTheme: Theme = createTheme('简黑', black)
+export const blackTheme: Theme = createTheme("简黑", black);
 
 // 黄色主题
-export const yellowTheme: Theme = createTheme('山吹', yellow)
+export const yellowTheme: Theme = createTheme("山吹", yellow);
 
 // 橙色主题
-export const orangeTheme: Theme = createTheme('橙心', orange)
+export const orangeTheme: Theme = createTheme("橙心", orange);
 
 // 获取所有主题
 export function getAllThemes(): Theme[] {
-  return [defaultTheme, blueTheme, redTheme, blackTheme, yellowTheme, orangeTheme]
+  return [
+    defaultTheme,
+    blueTheme,
+    redTheme,
+    blackTheme,
+    yellowTheme,
+    orangeTheme,
+  ];
 }

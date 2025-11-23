@@ -1,7 +1,7 @@
 import type { NotionPageData, Theme } from '@/types'
 import { processNotionImages } from '@/utils/imageProcessor'
 import { convertMarkdownToHtml, testConvertNotionImageUrls } from '@/utils/markdown'
-import { defaultCodeStyles, defaultTheme, getAllThemes, highlightJsStyles } from '@/utils/themes'
+import { defaultCodeStyles, defaultMediaStyles, defaultTheme, getAllThemes, highlightJsStyles } from '@/utils/themes'
 import juice from 'juice/client'
 
 class Notion2WeChat {
@@ -524,9 +524,9 @@ class Notion2WeChat {
       // 为段落元素添加字体大小和内边距样式
       const styledHtml = this.applyAdditionalStyles(processedHtml, theme)
 
-      // 获取基础样式（highlight.js 样式和默认代码样式）
+      // 获取基础样式（highlight.js 样式、默认代码样式和媒体样式）
       // 直接使用已导入的样式，避免动态导入
-      const baseStyles = highlightJsStyles + defaultCodeStyles
+      const baseStyles = highlightJsStyles + defaultCodeStyles + defaultMediaStyles
 
       // 使用 juice 内联 CSS 样式，将基础样式和主题样式组合
       const htmlWithStyles = `<section id="nice">${styledHtml}</section>`
