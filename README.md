@@ -61,10 +61,10 @@ git clone https://github.com/nmvr2600/notion2wechat.git
 cd notion2wechat
 
 # 安装依赖
-pnpm install
+bun install
 
 # 构建项目
-pnpm run build
+bun run build
 ```
 
 然后在 Chrome 浏览器中：
@@ -99,7 +99,7 @@ pnpm run build
 - **Markdown解析**: [Marked.js](https://marked.js.org/)
 - **代码高亮**: [Highlight.js](https://highlightjs.org/)
 - **CSS内联**: [Juice](https://github.com/Automattic/juice)
-- **包管理**: [pnpm](https://pnpm.io/)
+- **包管理**: [Bun](https://bun.sh/)
 
 ## 📁 项目结构
 
@@ -136,19 +136,19 @@ notion2wechat/
 
 ```bash
 # 安装依赖
-pnpm install
+bun install
 
 # 开发模式（热重载）
-pnpm run dev
+bun run dev
 
 # 构建生产版本
-pnpm run build
+bun run build
 
 # 代码检查
-pnpm run lint
+bun run lint
 
 # 代码格式化
-pnpm run format
+bun run format
 ```
 
 ## 🤝 贡献
