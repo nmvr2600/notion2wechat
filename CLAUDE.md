@@ -10,13 +10,13 @@ Notion2WeChat is a Chrome Extension (Manifest V3) that converts Notion articles 
 
 ```bash
 # Install dependencies
-pnpm install
+bun install
 
 # Development mode (watch mode, auto-rebuild on changes)
-pnpm run dev
+bun run dev
 
 # Build for production
-pnpm run build
+bun run build
 
 # Load extension in Chrome (after build)
 # 1. Open chrome://extensions/
@@ -28,34 +28,34 @@ pnpm run build
 
 ```bash
 # Watch mode - automatically rebuild on file changes
-pnpm run dev
+bun run dev
 
 # Build for production
-pnpm run build
+bun run build
 
 # Build and create CRX file (for Chrome Web Store)
-pnpm run build:crx
+bun run build:crx
 
 # Build and create ZIP file (for distribution)
-pnpm run build:zip
+bun run build:zip
 
 # Build and get loading instructions
-pnpm run build:load
+bun run build:load
 
 # Code linting
-pnpm run lint
+bun run lint
 
 # Fix lint issues
-pnpm run lint:fix
+bun run lint:fix
 
 # Format code
-pnpm run format
+bun run format
 
 # Preview (for testing built files)
-pnpm run preview
+bun run preview
 
 # Generate extension icons from SVG
-pnpm run icons
+bun run icons
 ```
 
 ## High-Level Architecture
@@ -240,7 +240,7 @@ Notion uses format: `attachment:uuid:filename`
 - `vite.config.ts` - Build configuration (bundling strategy, path aliases)
 - `tsconfig.json` - TypeScript configuration
 - `biome.json` - Linting, formatting, import organization rules
-- `pnpm-lock.yaml` - PNPM lockfile
+- `bun.lock` - Bun lockfile
 
 ### Extension Files
 - `public/manifest.json` - Chrome extension manifest (MV3)
@@ -341,7 +341,7 @@ Edit renderers in `utils/markdown.ts`:
 ### Testing Changes
 ```bash
 # 1. Build the extension
-pnpm run build
+bun run build
 
 # 2. Load in Chrome
 # chrome://extensions/ → Developer mode → Load unpacked → select dist/
@@ -365,7 +365,7 @@ pnpm run build
 - **marked.js** - Markdown parsing with custom renderers
 - **highlight.js** - Code syntax highlighting
 - **juice** - CSS inlining for email/clipboard compatibility
-- **PNPM** - Fast, efficient package manager
+- **Bun** - Fast JavaScript runtime and package manager
 
 ## Recent Major Changes
 
