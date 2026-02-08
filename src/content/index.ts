@@ -462,50 +462,34 @@ class Notion2WeChat {
     try {
       const selection = window.getSelection()
       if (selection) {
-        // 清除之前的选择
+        // 第一次全选：激活整个页面（不复制）
         selection.removeAllRanges()
-
-        // 第一次选择：选择当前block（模拟第一次Cmd+A）
         const range1 = document.createRange()
         range1.selectNodeContents(element)
         selection.addRange(range1)
-
-        // 执行第一次复制命令
-        document.execCommand('copy')
-
-        // 等待一小段时间确保第一次操作完成
         await new Promise((resolve) => setTimeout(resolve, 100))
 
-        // 第二次选择：重新选择整个页面内容（模拟第二次Cmd+A）
+        // 第二次全选：确保选中全文，然后复制
         selection.removeAllRanges()
         const range2 = document.createRange()
         range2.selectNodeContents(element)
         selection.addRange(range2)
-
-        // 执行第二次复制命令，这次应该能复制整个页面内容
         document.execCommand('copy')
-
-        // 等待更长时间确保复制操作完成
         await new Promise((resolve) => setTimeout(resolve, 200))
 
-        // 尝试从剪贴板读取Markdown内容
+        // 从剪贴板读取内容
         const clipboardText = await navigator.clipboard.readText()
-
-        // 清除选择
         selection.removeAllRanges()
 
-        // 如果剪贴板中有内容，直接返回
         if (clipboardText.trim()) {
           console.log('Clipboard content:', clipboardText.substring(0, 200))
           return clipboardText
         }
       }
 
-      // 如果剪贴板方法失败，回退到textContent
       return element.textContent || ''
     } catch (error) {
       console.error('Failed to extract markdown from clipboard:', error)
-      // 回退到textContent
       return element.textContent || ''
     }
   }
