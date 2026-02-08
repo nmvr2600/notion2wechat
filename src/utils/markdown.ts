@@ -180,10 +180,10 @@ renderer.codespan = (code: string): string => {
  */
 renderer.code = (code: string, language: string | undefined, escaped: boolean): string => {
   const lang = language || 'text'
-  
+
   // 确保代码内容被正确转义，防止HTML注入
   const escapedCode = escaped ? code : code.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  
+
   return `<pre><code class="hljs language-${lang}">${escapedCode}</code></pre>`
 }
 
@@ -194,18 +194,31 @@ renderer.code = (code: string, language: string | undefined, escaped: boolean): 
  * 处理流程：
  * 1. 配置marked解析器的选项和自定义渲染器
  * 2. 将Markdown转换为初始HTML
- * 3. 返回处理后的HTML和图片信息
+ * 3. 替换Mermaid代码块为SVG图片
+ * 4. 返回处理后的HTML和图片信息
  *
  * 注意：此函数是异步的，因为语法高亮需要异步操作。
  *
  * @param markdown - 原始Markdown文本，通常从Notion页面中提取
  * @param images - 图片数组参数（当前未使用，保留用于未来扩展）
+ * @param mermaidImages - Mermaid SVG 的 base64 编码数组，按文档顺序排列
  * @returns 返回一个Promise，解析为ConversionResult对象，包含处理后的HTML和图片信息
  */
 export async function convertMarkdownToHtml(
   markdown: string,
-  images: NotionImage[]
+  images: NotionImage[],
+  mermaidImages: string[] = []
 ): Promise<ConversionResult> {
+  // 预处理：替换 mermaid 代码块为占位符
+  // 使用 HTML 注释格式避免被 Markdown 解析
+  let mermaidIndex = 0
+  const processedMarkdown = markdown.replace(
+    /```mermaid\n([\s\S]*?)```/g,
+    () => `<!--MERMAID_${mermaidIndex++}-->`
+  )
+
+  console.log('[Mermaid] Found code blocks:', mermaidIndex, 'mermaidImages:', mermaidImages.length)
+
   // 设置marked选项
   marked.setOptions({
     renderer, // 使用自定义渲染器，确保HTML结构与主题样式匹配
@@ -215,7 +228,33 @@ export async function convertMarkdownToHtml(
 
   // 将Markdown转换为HTML
   // marked库会根据我们定义的渲染器规则将Markdown转换为HTML结构
-  const html = await marked.parse(markdown)
+  let html = await marked.parse(processedMarkdown)
+
+  console.log('[Mermaid] HTML contains <!--MERMAID_0-->:', html.includes('<!--MERMAID_0-->'))
+  console.log('[Mermaid] HTML preview (first 500 chars):', html.substring(0, 500))
+
+  // 后处理：替换 mermaid 占位符为 SVG 图片
+  let hasMermaidPlaceholder = false
+  mermaidImages.forEach((svgBase64, index) => {
+    const placeholder = `<!--MERMAID_${index}-->`
+    console.log('[Mermaid] Checking placeholder:', placeholder, 'found:', html.includes(placeholder))
+    if (html.includes(placeholder)) {
+      hasMermaidPlaceholder = true
+      html = html.replace(
+        placeholder,
+        `<div class="mermaid-container"><img src="${svgBase64}" alt="Mermaid diagram" /></div>`
+      )
+    }
+  })
+
+  // 如果没有找到占位符但有 mermaid 图片，说明 Notion 已经渲染了 mermaid
+  // 直接在 HTML 末尾追加 mermaid 图片
+  if (!hasMermaidPlaceholder && mermaidImages.length > 0) {
+    const mermaidHtml = mermaidImages
+      .map((svgBase64) => `<div class="mermaid-container"><img src="${svgBase64}" alt="Mermaid diagram" /></div>`)
+      .join('\n')
+    html = html + mermaidHtml
+  }
 
   // 返回处理结果
   return { html, images }

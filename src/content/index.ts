@@ -1,7 +1,13 @@
 import type { NotionPageData, Theme } from '@/types'
 import { processNotionImages } from '@/utils/imageProcessor'
 import { convertMarkdownToHtml, testConvertNotionImageUrls } from '@/utils/markdown'
-import { defaultCodeStyles, defaultMediaStyles, defaultTheme, getAllThemes, highlightJsStyles } from '@/utils/themes'
+import {
+  defaultCodeStyles,
+  defaultMediaStyles,
+  defaultTheme,
+  getAllThemes,
+  highlightJsStyles,
+} from '@/utils/themes'
 import juice from 'juice/client'
 
 class Notion2WeChat {
@@ -400,7 +406,7 @@ class Notion2WeChat {
       // 转换Markdown为HTML，首先处理图片URL
       // const processedMarkdown = convertNotionImageUrls(notionData.content)
       // console.log('Processed markdown:', processedMarkdown) // 调试信息
-      const result = await convertMarkdownToHtml(notionData.content, [])
+      const result = await convertMarkdownToHtml(notionData.content, [], notionData.mermaidImages)
       console.log('Generated HTML:', result.html) // 调试信息
       // 保存原始HTML内容
       this.currentHtmlContent = result.html
@@ -420,6 +426,30 @@ class Notion2WeChat {
         generateBtn.disabled = false
       }
     }
+  }
+
+  /**
+   * 查找页面中的所有 Mermaid SVG 元素（按文档顺序）
+   * 选择器: svg[id^="mermaid-"]
+   * Notion 渲染的 Mermaid 图表具有以下特征:
+   * - SVG 元素的 id 格式为 "mermaid-UUID"
+   * - 包含 role="graphics-document document" 和 aria-roledescription 属性
+   */
+  private findMermaidSvgElements(container: Element): SVGElement[] {
+    return Array.from(container.querySelectorAll('svg[id^="mermaid-"]'))
+  }
+
+  /**
+   * 将 SVG 元素序列化为 base64 格式的 data URI
+   * 用于在生成的 HTML 中作为图片嵌入
+   */
+  private svgToBase64(svgElement: SVGElement): string {
+    const serializer = new XMLSerializer()
+    const svgData = serializer.serializeToString(svgElement)
+    // 使用 unescape 和 encodeURIComponent 处理中文字符和特殊字符
+    const encoded = unescape(encodeURIComponent(svgData))
+    const base64 = btoa(encoded)
+    return `data:image/svg+xml;base64,${base64}`
   }
 
   private async extractNotionContent(): Promise<NotionPageData | null> {
@@ -447,10 +477,18 @@ class Notion2WeChat {
       console.log('Extracted content length:', content.length)
       console.log('Content preview:', content.substring(0, 200))
 
+      // 查找页面中的 Mermaid SVG（按文档顺序）
+      const mermaidSvgs = this.findMermaidSvgElements(contentElement)
+      console.log('Found Mermaid SVG elements:', mermaidSvgs.length)
+
+      // 转换为 base64 数组（按顺序）
+      const mermaidImages = mermaidSvgs.map((svg) => this.svgToBase64(svg))
+
       return {
         title,
         content,
         images: [],
+        mermaidImages,
       }
     } catch (error) {
       console.error('Error extracting Notion content:', error)
@@ -526,16 +564,18 @@ class Notion2WeChat {
       })
 
       previewContent.innerHTML = inlinedHtml
-      
+
       // 确保代码块样式正确应用，特别是对于高亮代码块
-      const codeBlocks = previewContent.querySelectorAll('pre code[class*="language-"], pre code[class*="hljs"]')
-      codeBlocks.forEach((block: Element) => {
+      const codeBlocks = previewContent.querySelectorAll(
+        'pre code[class*="language-"], pre code[class*="hljs"]'
+      )
+      for (const block of codeBlocks) {
         const codeElement = block as HTMLElement
         // 确保代码块有正确的类名以激活语法高亮样式
         if (!codeElement.classList.contains('hljs')) {
           codeElement.classList.add('hljs')
         }
-      })
+      }
 
       // 添加可选择的样式
       const pc = previewContent as HTMLElement
@@ -554,8 +594,6 @@ class Notion2WeChat {
     // 创建临时DOM元素来处理HTML
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = html
-
-
 
     // 如果使用的是yellow主题，为段落元素添加额外样式
     if (theme.name === '黄色') {
@@ -652,7 +690,7 @@ class Notion2WeChat {
         console.warn('样式未正确内联，尝试使用备用方案')
         // 查找页面上的所有style标签
         const allStyles = Array.from(document.querySelectorAll('style'))
-          .map(s => s.textContent || '')
+          .map((s) => s.textContent || '')
           .join('\n')
 
         if (allStyles) {

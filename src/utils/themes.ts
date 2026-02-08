@@ -1,4 +1,4 @@
-import type { Theme } from "@/types";
+import type { Theme } from '@/types'
 
 // highlight.js 样式 - 作为基础样式
 export const highlightJsStyles = `
@@ -89,7 +89,7 @@ export const highlightJsStyles = `
 #nice .hljs-strong {
   font-weight: bold
 }
-`;
+`
 
 // VS Code 2025 风格的代码高亮样式 - 作为默认代码块样式
 export const defaultCodeStyles = `
@@ -130,7 +130,7 @@ export const defaultCodeStyles = `
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
   font-size: 0.9em !important;
 }
-`;
+`
 
 // 默认表格样式 - 作为基础表格样式
 export const defaultTableStyles = `
@@ -153,7 +153,7 @@ export const defaultTableStyles = `
   background-color: #f2f2f2;
   font-weight: bold;
 }
-`;
+`
 
 export const defaultMediaStyles = `
 #nice section.notion-image-container {
@@ -178,7 +178,21 @@ export const defaultMediaStyles = `
   max-width: 100% !important;
   box-sizing: border-box !important;
 }
-`;
+
+/* Mermaid 图表容器样式 */
+#nice .mermaid-container {
+  text-align: center;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+#nice .mermaid-container img {
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
+  margin: 0 auto;
+}
+`
 
 // 各主题的特定样式（不包含 highlight.js 样式和代码块样式）
 const blue = `/* 全局属性
@@ -422,7 +436,7 @@ list-style-type: decimal;
 /* 行内公式
  */
 #nice .inline-equation svg {
-}`;
+}`
 
 const red = `
 /*自定义样式，实时生效*/
@@ -718,7 +732,7 @@ const red = `
     width: 100%;
     margin-bottom: 0;
 }
-`;
+`
 
 const black = `
 /* 自定义样式，实时生效，浏览器实时缓存 */
@@ -1090,7 +1104,7 @@ const black = `
   border-radius: 0;
 }
 
-`;
+`
 
 const yellow = `
 /*自定义样式，实时生效*/
@@ -1363,7 +1377,7 @@ list-style-type: decimal;
   width:100%;
   margin-bottom: 0;
 }
-`;
+`
 
 const orange = `
 /* 全局属性
@@ -1592,11 +1606,11 @@ list-style-type: decimal;
  */
 #nice .inline-equation svg {
 }
-`;
+`
 
 const defaultStyle = `
  #nice { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 100%; margin: 0 auto; padding: 20px; } #nice h1 { font-size: 24px; font-weight: bold; margin: 20px 0; color: #000; } #nice h2 { font-size: 20px; font-weight: bold; margin: 18px 0; color: #000; } #nice h3 { font-size: 18px; font-weight: bold; margin: 16px 0; color: #000; } #nice p { margin: 15px 0; text-align: justify; } #nice blockquote { border-left: 4px solid #ddd; margin: 15px 0; padding: 10px 20px; background-color: #f9f9f9; } #nice table { width: 100%; border-collapse: collapse; margin: 15px 0; } #nice th, #nice td { border: 1px solid #ddd; padding: 8px; text-align: left; } #nice th { background-color: #f2f2f2; } #nice ul, #nice ol { margin: 15px 0; padding-left: 30px; } #nice li { margin: 5px 0; }
-`;
+`
 
 // 创建主题的函数，包含基础样式和主题特定样式
 function createTheme(name: string, themeStyles: string): Theme {
@@ -1606,40 +1620,33 @@ function createTheme(name: string, themeStyles: string): Theme {
     defaultTableStyles,
     defaultMediaStyles,
     themeStyles,
-  ].join("\n");
+  ].join('\n')
 
   return {
     name,
     styles: allStyles,
-  };
+  }
 }
 
 // 默认主题
-export const defaultTheme: Theme = createTheme("默认", defaultStyle);
+export const defaultTheme: Theme = createTheme('默认', defaultStyle)
 
 // 蓝色主题
-export const blueTheme: Theme = createTheme("微信", blue);
+export const blueTheme: Theme = createTheme('微信', blue)
 
 // 红色主题
-export const redTheme: Theme = createTheme("红绯", red);
+export const redTheme: Theme = createTheme('红绯', red)
 
 // 黑色主题
-export const blackTheme: Theme = createTheme("简黑", black);
+export const blackTheme: Theme = createTheme('简黑', black)
 
 // 黄色主题
-export const yellowTheme: Theme = createTheme("山吹", yellow);
+export const yellowTheme: Theme = createTheme('山吹', yellow)
 
 // 橙色主题
-export const orangeTheme: Theme = createTheme("橙心", orange);
+export const orangeTheme: Theme = createTheme('橙心', orange)
 
 // 获取所有主题
 export function getAllThemes(): Theme[] {
-  return [
-    defaultTheme,
-    blueTheme,
-    redTheme,
-    blackTheme,
-    yellowTheme,
-    orangeTheme,
-  ];
+  return [defaultTheme, blueTheme, redTheme, blackTheme, yellowTheme, orangeTheme]
 }
