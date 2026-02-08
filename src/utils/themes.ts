@@ -1,8 +1,8 @@
 import type { Theme } from '@/types'
 
-// highlight.js 样式 - 作为基础样式
+// highlight.js 样式 - 浅色主题 (GitHub Light 风格)
 export const highlightJsStyles = `
-/* highlight.js 样式 */
+/* highlight.js 样式 - 浅色主题 */
 #nice pre code.hljs {
   display: block;
   overflow-x: auto;
@@ -12,8 +12,8 @@ export const highlightJsStyles = `
   padding: 3px 5px
 }
 #nice .hljs {
-  background: #F3F3F3;
-  color: #444
+  background: #f6f8fa;
+  color: #24292f
 }
 #nice .hljs-subst {
 
@@ -25,15 +25,15 @@ export const highlightJsStyles = `
 
 }
 #nice .hljs-comment {
-  color: #697070
+  color: #6e7781
 }
 #nice .hljs-tag,
 #nice .hljs-punctuation {
-  color: #444a
+  color: #24292f
 }
 #nice .hljs-tag .hljs-name,
 #nice .hljs-tag .hljs-attr {
-  color: #444
+  color: #24292f
 }
 #nice .hljs-keyword,
 #nice .hljs-attribute,
@@ -41,7 +41,7 @@ export const highlightJsStyles = `
 #nice .hljs-meta .hljs-keyword,
 #nice .hljs-doctag,
 #nice .hljs-name {
-  font-weight: bold
+  color: #cf222e
 }
 #nice .hljs-type,
 #nice .hljs-string,
@@ -51,11 +51,11 @@ export const highlightJsStyles = `
 #nice .hljs-quote,
 #nice .hljs-template-tag,
 #nice .hljs-deletion {
-  color: #880000
+  color: #0550ae
 }
 #nice .hljs-title,
 #nice .hljs-section {
-  color: #880000;
+  color: #0550ae;
   font-weight: bold
 }
 #nice .hljs-regexp,
@@ -66,22 +66,22 @@ export const highlightJsStyles = `
 #nice .hljs-selector-attr,
 #nice .hljs-operator,
 #nice .hljs-selector-pseudo {
-  color: #ab5656
+  color: #8a4c02
 }
 #nice .hljs-literal {
-  color: #695
+  color: #0550ae
 }
 #nice .hljs-built_in,
 #nice .hljs-bullet,
 #nice .hljs-code,
 #nice .hljs-addition {
-  color: #397300
+  color: #116329
 }
 #nice .hljs-meta {
-  color: #1f7199
+  color: #0550ae
 }
 #nice .hljs-meta .hljs-string {
-  color: #38a
+  color: #0550ae
 }
 #nice .hljs-emphasis {
   font-style: italic
@@ -91,16 +91,17 @@ export const highlightJsStyles = `
 }
 `
 
-// VS Code 2025 风格的代码高亮样式 - 作为默认代码块样式
+// VS Code Light 风格的代码高亮样式 - 作为默认代码块样式（浅色主题）
 export const defaultCodeStyles = `
-/* 代码块样式 */
+/* 代码块样式 - 浅色主题 */
 #nice pre {
-  background-color: #1e1e1e !important;
-  border-radius: 8px !important;
+  background-color: #f6f8fa !important;
+  border: 1px solid #d0d7de !important;
+  border-radius: 6px !important;
   padding: 16px !important;
   overflow-x: auto !important;
   margin: 16px 0 !important;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
 }
 
 #nice pre code {
@@ -109,26 +110,27 @@ export const defaultCodeStyles = `
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
   font-size: 14px !important;
   line-height: 1.5 !important;
-  color: #d4d4d4 !important;
+  color: #24292f !important;
   display: block !important;
 }
 
 #nice code.hljs {
   padding: 1em !important;
   overflow-x: auto !important;
-  background: #1e1e1e !important;
-  color: #d4d4d4 !important;
-  border-radius: 8px !important;
+  background: #f6f8fa !important;
+  color: #24292f !important;
+  border-radius: 6px !important;
 }
 
-/* 行内代码样式 */
+/* 行内代码样式 - 浅色主题 */
 #nice .inline-code {
-  background-color: rgba(110, 118, 129, 0.2) !important;
-  color: #d73a49 !important;
+  background-color: rgba(175, 184, 193, 0.2) !important;
+  color: #cf222e !important;
   padding: 2px 6px !important;
   border-radius: 4px !important;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
   font-size: 0.9em !important;
+  border: 1px solid #d0d7de !important;
 }
 `
 
@@ -627,14 +629,15 @@ const red = `
     color: rgb(271, 93, 108);
 }
 
-/* 代码块样式（红色主题自定义） */
+/* 代码块样式（红色主题自定义 - 浅色） */
 #nice pre {
-  background-color: #1e1e1e;
-  border-radius: 8px;
+  background-color: #fff5f5;
+  border: 1px solid #fdd;
+  border-radius: 6px;
   padding: 16px;
   overflow-x: auto;
   margin: 16px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(248, 57, 41, 0.1);
 }
 
 #nice pre code {
@@ -643,10 +646,10 @@ const red = `
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   line-height: 1.5;
-  color: #d4d4d4;
+  color: #24292f;
 }
 
-/* 行内代码样式（红色主题自定义） */
+/* 行内代码样式（红色主题自定义 - 浅色） */
 #nice .inline-code {
   background-color: rgba(248, 57, 41, 0.1);
   color: #f83929;
@@ -654,6 +657,7 @@ const red = `
   border-radius: 4px;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
+  border: 1px solid rgba(248, 57, 41, 0.2);
 }
 
 /* 表格内的单元格 */
@@ -976,14 +980,15 @@ const black = `
   color:#ff6441;
 }
 
-/* 代码块样式（黑色主题自定义） */
+/* 代码块样式（黑色主题自定义 - 浅色） */
 #nice pre {
-  background-color: #1e1e1e;
-  border-radius: 8px;
+  background-color: #fafafa;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
   padding: 16px;
   overflow-x: auto;
   margin: 16px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 #nice pre code {
@@ -992,17 +997,18 @@ const black = `
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   line-height: 1.5;
-  color: #d4d4d4;
+  color: #24292f;
 }
 
-/* 行内代码样式（黑色主题自定义） */
+/* 行内代码样式（黑色主题自定义 - 浅色） */
 #nice .inline-code {
-  background-color: rgba(255, 100, 65, 0.1);
+  background-color: rgba(0, 0, 0, 0.06);
   color: #ff6441;
   padding: 2px 6px;
   border-radius: 4px;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* 非微信代码块
@@ -1279,14 +1285,15 @@ list-style-type: decimal;
   margin: 3px;
 }
 
-/* 代码块样式（黄色主题自定义） */
+/* 代码块样式（黄色主题自定义 - 浅色） */
 #nice pre {
-  background-color: #1e1e1e;
-  border-radius: 8px;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
   padding: 16px;
   overflow-x: auto;
   margin: 16px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(251, 191, 36, 0.1);
 }
 
 #nice pre code {
@@ -1295,17 +1302,18 @@ list-style-type: decimal;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   line-height: 1.5;
-  color: #d4d4d4;
+  color: #24292f;
 }
 
-/* 行内代码样式（黄色主题自定义） */
+/* 行内代码样式（黄色主题自定义 - 浅色） */
 #nice .inline-code {
-  background-color: rgba(249, 191, 69, 0.1);
+  background-color: rgba(251, 191, 36, 0.15);
   color: #9b6e23;
   padding: 2px 6px;
   border-radius: 4px;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
+  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 /* 非微信代码块
@@ -1537,14 +1545,15 @@ list-style-type: decimal;
   color: rgb(239, 112, 96);
 }
 
-/* 代码块样式（橙色主题自定义） */
+/* 代码块样式（橙色主题自定义 - 浅色） */
 #nice pre {
-  background-color: #1e1e1e;
-  border-radius: 8px;
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 6px;
   padding: 16px;
   overflow-x: auto;
   margin: 16px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(249, 115, 22, 0.1);
 }
 
 #nice pre code {
@@ -1553,17 +1562,18 @@ list-style-type: decimal;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   line-height: 1.5;
-  color: #d4d4d4;
+  color: #24292f;
 }
 
-/* 行内代码样式（橙色主题自定义） */
+/* 行内代码样式（橙色主题自定义 - 浅色） */
 #nice .inline-code {
-  background-color: rgba(239, 112, 96, 0.1);
+  background-color: rgba(249, 115, 22, 0.1);
   color: rgb(239, 112, 96);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
+  border: 1px solid rgba(249, 115, 22, 0.2);
 }
 
 /*

@@ -237,7 +237,12 @@ export async function convertMarkdownToHtml(
   let hasMermaidPlaceholder = false
   mermaidImages.forEach((svgBase64, index) => {
     const placeholder = `<!--MERMAID_${index}-->`
-    console.log('[Mermaid] Checking placeholder:', placeholder, 'found:', html.includes(placeholder))
+    console.log(
+      '[Mermaid] Checking placeholder:',
+      placeholder,
+      'found:',
+      html.includes(placeholder)
+    )
     if (html.includes(placeholder)) {
       hasMermaidPlaceholder = true
       html = html.replace(
@@ -251,7 +256,10 @@ export async function convertMarkdownToHtml(
   // 直接在 HTML 末尾追加 mermaid 图片
   if (!hasMermaidPlaceholder && mermaidImages.length > 0) {
     const mermaidHtml = mermaidImages
-      .map((svgBase64) => `<div class="mermaid-container"><img src="${svgBase64}" alt="Mermaid diagram" /></div>`)
+      .map(
+        (svgBase64) =>
+          `<div class="mermaid-container"><img src="${svgBase64}" alt="Mermaid diagram" /></div>`
+      )
       .join('\n')
     html = html + mermaidHtml
   }
