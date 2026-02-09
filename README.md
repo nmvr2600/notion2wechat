@@ -35,22 +35,17 @@ Notion2WeChat 是一款专为内容创作者设计的 Chrome 浏览器扩展，�
 
 ## 📷 效果展示
 
-![notion](./docs/sample.png)
+![notion](./docs/screen.png)
 
 *实际效果更佳，支持多种主题样式切换*
 
 ## 📦 安装方式
 
-### Chrome Web Store (推荐)
-1. 访问 [Chrome 网上应用店](https://chrome.google.com/webstore)
-2. 搜索 "Notion2WeChat"
-3. 点击 "添加至 Chrome" 按钮完成安装
-
 ### Microsoft Edge Add-ons
 插件现已发布到 Microsoft Edge 商店，访问以下链接安装：
 [Notion2WeChat on Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/notion2wechat/bcbilhmidmhbjkcnkjakpbflagglgdlf)
 
-> ⚠️ **注意**：扩展尚未发布到 Chrome 商店，可通过 [GitHub Actions](https://github.com/nmvr2600/notion2wechat/actions) 下载最新构建版本
+> ⚠️ **注意**：扩展未发布到 Chrome 商店，可以直接通过 Edge 商店安装，或者自己下载构建。
 
 ### 开发者模式安装
 ```bash
@@ -97,7 +92,7 @@ bun run build
 - **构建工具**: [Vite](https://vitejs.dev/)
 - **浏览器标准**: [Chrome Extension Manifest V3](https://developer.chrome.com/docs/extensions/mv3/)
 - **Markdown解析**: [Marked.js](https://marked.js.org/)
-- **代码高亮**: [Highlight.js](https://highlightjs.org/)
+- **代码高亮**: [Highlight.js](https://highlightjs.org/) + [marked-highlight](https://github.com/markedjs/marked-highlight)
 - **CSS内联**: [Juice](https://github.com/Automattic/juice)
 - **包管理**: [Bun](https://bun.sh/)
 
@@ -108,12 +103,18 @@ notion2wechat/
 ├── src/
 │   ├── background/       # 后台脚本
 │   ├── content/          # 内容脚本（核心功能）
+│   │   ├── index.ts      # 主逻辑
+│   │   └── styles.css    # 样式文件
 │   ├── types/            # TypeScript 类型定义
 │   └── utils/            # 工具函数
 │       ├── imageProcessor.ts  # 图片处理逻辑
 │       ├── markdown.ts        # Markdown 解析和转换
 │       └── themes.ts          # 主题样式管理
 ├── public/               # 静态资源和 manifest.json
+│   ├── _locales/         # 国际化文件
+│   │   ├── en/           # 英文
+│   │   └── zh_CN/        # 简体中文
+│   └── icons/            # 扩展图标
 ├── dist/                 # 构建输出目录
 ├── package.json          # 项目配置和依赖
 └── vite.config.ts        # 构建配置
@@ -144,11 +145,26 @@ bun run dev
 # 构建生产版本
 bun run build
 
+# 构建并打包为 .crx 文件
+bun run build:crx
+
+# 构建并打包为 .zip 文件
+bun run build:zip
+
+# 构建并提示加载方式
+bun run build:load
+
 # 代码检查
 bun run lint
 
+# 代码检查并自动修复
+bun run lint:fix
+
 # 代码格式化
 bun run format
+
+# 生成图标
+bun run icons
 ```
 
 ## 🤝 贡献

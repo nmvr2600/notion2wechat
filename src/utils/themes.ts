@@ -183,15 +183,20 @@ export const defaultMediaStyles = `
 
 /* Mermaid 图表容器样式 */
 #nice .mermaid-container {
+  width: 100%;
+  min-height: 100px;
   text-align: center;
   margin: 16px 0;
   overflow-x: auto;
+  overflow-y: hidden;
+  box-sizing: border-box;
 }
 
 #nice .mermaid-container img {
   max-width: 100%;
-  height: auto;
-  display: inline-block;
+  height: auto !important;
+  min-height: 80px;
+  display: block;
   margin: 0 auto;
 }
 `

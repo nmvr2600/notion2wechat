@@ -16,4 +16,12 @@
 | #368 | 3:20 PM | 🔵 | Six complete themes implemented | ~263 |
 | #366 | " | 🔵 | Markdown conversion engine discovered | ~277 |
 | #365 | " | 🔵 | Image processing strategy identified | ~238 |
+
+### Feb 9, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #558 | 10:53 AM | 🔵 | Mermaid diagram copy format is SVG base64 data URI in img tags | ~210 |
+| #551 | 10:49 AM | 🔵 | Mermaid diagram conversion to base64 SVG data URIs | ~243 |
+| #549 | 10:39 AM | 🔴 | Mermaid diagram width fix for WeChat display | ~130 |
 </claude-mem-context>
