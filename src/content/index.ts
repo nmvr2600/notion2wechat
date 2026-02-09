@@ -440,16 +440,71 @@ class Notion2WeChat {
   }
 
   /**
-   * 将 SVG 元素序列化为 base64 格式的 data URI
-   * 用于在生成的 HTML 中作为图片嵌入
+   * 将 SVG 元素转换为 PNG 格式的 base64 data URI
+   * 用于在微信公众号等不支持 SVG 的环境中显示
+   *
+   * 转换流程：
+   * 1. 序列化 SVG 元素为字符串
+   * 2. 创建 Canvas 元素
+   * 3. 将 SVG 绘制到 Canvas 上
+   * 4. 将 Canvas 导出为 PNG 格式的 base64 字符串
+   *
+   * @param svgElement - 要转换的 SVG 元素
+   * @param scale - 缩放比例，默认为 2 以保证高清输出
+   * @returns 返回 PNG 格式的 base64 data URI
    */
-  private svgToBase64(svgElement: SVGElement): string {
+  private async svgToPngBase64(svgElement: SVGElement, scale = 2): Promise<string> {
     const serializer = new XMLSerializer()
-    const svgData = serializer.serializeToString(svgElement)
-    // 使用 unescape 和 encodeURIComponent 处理中文字符和特殊字符
-    const encoded = unescape(encodeURIComponent(svgData))
-    const base64 = btoa(encoded)
-    return `data:image/svg+xml;base64,${base64}`
+    let svgData = serializer.serializeToString(svgElement)
+
+    // 获取 SVG 的原始尺寸
+    const rect = svgElement.getBoundingClientRect()
+    const width = rect.width || Number.parseInt(svgElement.getAttribute('width') || '800')
+    const height = rect.height || Number.parseInt(svgElement.getAttribute('height') || '600')
+
+    // 确保 SVG 有 xmlns 命名空间，否则 Canvas 无法绘制
+    if (!svgData.includes('xmlns=')) {
+      svgData = svgData.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"')
+    }
+
+    // 将 SVG 字符串编码为 base64
+    const svgBase64 = btoa(unescape(encodeURIComponent(svgData)))
+    const svgDataUrl = `data:image/svg+xml;base64,${svgBase64}`
+
+    // 创建 Canvas
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    if (!ctx) {
+      throw new Error('无法创建 Canvas 上下文')
+    }
+
+    // 设置 Canvas 尺寸（使用缩放比例以保证高清）
+    canvas.width = width * scale
+    canvas.height = height * scale
+
+    // 创建图片对象
+    const img = new Image()
+
+    return new Promise((resolve, reject) => {
+      img.onload = () => {
+        // 填充白色背景（避免透明背景变为黑色）
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        // 绘制图片
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+        // 导出为 PNG base64
+        const pngBase64 = canvas.toDataURL('image/png', 1.0)
+        resolve(pngBase64)
+      }
+
+      img.onerror = () => {
+        reject(new Error('SVG 图片加载失败'))
+      }
+
+      img.src = svgDataUrl
+    })
   }
 
   private async extractNotionContent(): Promise<NotionPageData | null> {
@@ -481,8 +536,8 @@ class Notion2WeChat {
       const mermaidSvgs = this.findMermaidSvgElements(contentElement)
       console.log('Found Mermaid SVG elements:', mermaidSvgs.length)
 
-      // 转换为 base64 数组（按顺序）
-      const mermaidImages = mermaidSvgs.map((svg) => this.svgToBase64(svg))
+      // 转换为 PNG base64 数组（按顺序）
+      const mermaidImages = await Promise.all(mermaidSvgs.map((svg) => this.svgToPngBase64(svg)))
 
       return {
         title,
