@@ -392,7 +392,11 @@ export function convertNotionImageUrls(markdown: string): string {
 
     // 转换其他Notion相关URL
     // 包括file.notion.so等内部域名
-    if (cleanUrl.includes('notion.so') || cleanUrl.includes('file.notion.so')) {
+    if (
+      cleanUrl.includes('notion.so') ||
+      cleanUrl.includes('notion.com') ||
+      cleanUrl.includes('file.notion.so')
+    ) {
       const convertedUrl = convertNotionImageUrl(cleanUrl)
       return `![${alt}](${convertedUrl})`
     }

@@ -5,10 +5,10 @@
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
   "permissions": ["activeTab", "storage"],
-  "host_permissions": ["https://www.notion.so/*"],
+  "host_permissions": ["https://www.notion.so/*", "https://*.notion.com/*"],
   "content_scripts": [
     {
-      "matches": ["https://www.notion.so/*"],
+      "matches": ["https://www.notion.so/*", "https://*.notion.com/*"],
       "js": ["content.js"],
       "css": ["styles.css"]
     }
@@ -16,7 +16,7 @@
   "web_accessible_resources": [
     {
       "resources": ["*.css", "*.js", "*.wasm", "assets/*", "assets/**/*"],
-      "matches": ["https://www.notion.so/*"]
+      "matches": ["https://www.notion.so/*", "https://*.notion.com/*"]
     }
   ],
   "background": {

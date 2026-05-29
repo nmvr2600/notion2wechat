@@ -64,7 +64,11 @@ async function processImage(img: HTMLImageElement): Promise<void> {
   }
 
   // 处理其他Notion图片URL - 转换为base64
-  if (src.includes('notion.so') || src.includes('notionusercontent.com')) {
+  if (
+    src.includes('notion.so') ||
+    src.includes('notion.com') ||
+    src.includes('notionusercontent.com')
+  ) {
     console.log('Converting Notion image to base64:', src)
     await convertImageToBase64(img, img)
   }
@@ -96,9 +100,10 @@ async function findRealImageUrl(attachmentSrc: string): Promise<string | null> {
     const pathBeforeQuery = decodedPageSrc.split('?')[0]
     if (pathBeforeQuery.includes(fullAttachment)) {
       console.log('Found matching image by full attachment marker:', pageSrc)
-      // 如果是相对路径，转换为绝对路径
+      // 如果是相对路径，根据当前页面域名转换为绝对路径
       if (pageSrc.startsWith('/')) {
-        const absoluteUrl = `https://www.notion.so${pageSrc}`
+        const host = window.location.hostname
+        const absoluteUrl = `https://${host}${pageSrc}`
         console.log('Converted to absolute URL:', absoluteUrl)
         return absoluteUrl
       }
