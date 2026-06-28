@@ -1,5 +1,5 @@
 import type { NotionPageData, Theme } from '@/types'
-import { processNotionImages } from '@/utils/imageProcessor'
+import { getPageImageBlocks, processNotionImages, reconstructImagesInMarkdown } from '@/utils/imageProcessor'
 import { convertMarkdownToHtml, testConvertNotionImageUrls } from '@/utils/markdown'
 import {
   defaultCodeStyles,
@@ -527,7 +527,17 @@ class Notion2WeChat {
       console.log('Element children count:', contentElement.children.length)
 
       // 使用剪贴板API获取Notion页面的Markdown内容
-      const content = await this.extractMarkdownFromElement(contentElement)
+      let content = await this.extractMarkdownFromElement(contentElement)
+
+      // 新版 Notion 复制出的 Markdown 丢失了图片 URL（只剩 "!文件名" 文本），
+      // 这里从页面 DOM 重新收集图片 src，按文档顺序回填到 Markdown。
+      const pageImageSrcs = getPageImageBlocks()
+      if (pageImageSrcs.length > 0) {
+        const before = (content.match(/^![^\s!()[\]]{1,}[^\n!()[\]]*$/gim) || []).length
+        content = reconstructImagesInMarkdown(content, pageImageSrcs)
+        const after = (content.match(/!\[[^\]]*\]\(/g) || []).length
+        console.log(`[N2W] Image reconstruction: ${before} broken markers → ${after} restored`)
+      }
 
       console.log('Extracted content length:', content.length)
       console.log('Content preview:', content.substring(0, 200))

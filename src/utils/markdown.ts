@@ -371,7 +371,7 @@ export function convertNotionImageUrls(markdown: string): string {
         const fileName = attachmentMatch[2]
         // 构建可访问的Notion图片URL
         // 使用Notion的图片API，包含页面ID、表格类型等必要参数
-        const convertedUrl = `https://www.notion.so/image/${encodeURIComponent(fileName)}?id=${pageId}&table=block&width=1024&userId=v&cache=v2`
+        const convertedUrl = `https://app.notion.com/image/${encodeURIComponent(fileName)}?id=${pageId}&table=block&width=1024&userId=v&cache=v2`
         return `![${alt}](${convertedUrl})`
       }
     }
@@ -383,7 +383,7 @@ export function convertNotionImageUrls(markdown: string): string {
     // 检查是否已经是正确格式的Notion图片URL
     // 如果是，则不需要进一步处理
     if (
-      cleanUrl.includes('https://www.notion.so/image/') &&
+      (cleanUrl.includes('/image/attachment') || cleanUrl.includes('/image/')) &&
       cleanUrl.includes('id=') &&
       cleanUrl.includes('table=')
     ) {
@@ -391,11 +391,14 @@ export function convertNotionImageUrls(markdown: string): string {
     }
 
     // 转换其他Notion相关URL
-    // 包括file.notion.so等内部域名
+    // 包括各种 Notion CDN 域名
     if (
       cleanUrl.includes('notion.so') ||
       cleanUrl.includes('notion.com') ||
-      cleanUrl.includes('file.notion.so')
+      cleanUrl.includes('file.notion.so') ||
+      cleanUrl.includes('files.notion.so') ||
+      cleanUrl.includes('notionusercontent.com') ||
+      cleanUrl.includes('prod-files-secure')
     ) {
       const convertedUrl = convertNotionImageUrl(cleanUrl)
       return `![${alt}](${convertedUrl})`
@@ -408,20 +411,13 @@ export function convertNotionImageUrls(markdown: string): string {
 
 /**
  * 转换单个Notion图片URL
- * 将Notion内部域名转换为可公开访问的域名格式。
- *
- * 这个函数处理特定类型的Notion图片URL，主要是将file.notion.so域名
- * 转换为www.notion.so/image域名，使图片可以在外部环境中访问。
- *
- * @param url - 原始Notion图片URL，通常是内部域名格式
- * @returns 返回转换后的URL，使用可公开访问的域名
+ * 将Notion内部文件域名转换为可访问的格式
  */
 function convertNotionImageUrl(url: string): string {
-  // 检查URL是否包含Notion内部文件域名
-  if (url.includes('file.notion.so')) {
-    // 将内部域名替换为可访问的图片API域名
-    return url.replace('file.notion.so', 'www.notion.so/image')
+  // 处理 file.notion.so / files.notion.so
+  if (url.includes('file.notion.so') || url.includes('files.notion.so')) {
+    return url.replace(/files?\.notion\.so/, 'app.notion.com/image')
   }
-  // 如果不是内部域名，直接返回原URL
+  // img.notionusercontent.com 和 prod-files-secure 可直接访问，无需转换
   return url
 }
